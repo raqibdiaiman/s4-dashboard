@@ -10,8 +10,9 @@
   :root{--bg:#0d1117;--card:#161b22;--line:#2a313c;--txt:#e6edf3;--mut:#8b949e;--up:#26a269;--dn:#e5534b;--acc:#d4a72c;--blue:#4c8dff}
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt);font-size:15px}
-  header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
-  header h1{font-size:17px;margin:0;letter-spacing:.3px}
+  header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+  header h1{font-size:17px;margin:0;letter-spacing:.3px;white-space:nowrap}
+  #who{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:var(--mut)}
   .dot.on{background:var(--up)} .dot.off{background:var(--dn)}
   main{max-width:1100px;margin:0 auto;padding:14px}
@@ -43,7 +44,7 @@
   .center .card{display:flex;flex-direction:column;gap:12px}
   .err{color:var(--dn);font-size:13px;min-height:16px}
   .hide{display:none!important}
-  select{background:#161b22;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font-size:14px;max-width:230px}
+  select{background:#161b22;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font-size:14px;max-width:100%;min-width:120px}
   .banner{background:#3d2e00;color:#e3b341;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px}
 </style>
 </head>
@@ -206,6 +207,10 @@ function start(c) {
       $("accSel").innerHTML = list.map(a => `<option value="${esc(a.login)}">${esc(a.type)} · ${esc(a.login)} · ${esc(a.server)}</option>`).join("");
       $("accSel").value = want;
       pick(want);
+    }, err => {
+      $("accSel").innerHTML = "<option>No access</option>";
+      $("staleBanner").textContent = "Cannot read the data (" + (err.code || err.message) + "). Check that the UID in Realtime Database → Rules matches your user's UID in Authentication → Users, then Publish.";
+      show("staleBanner", true);
     });
   });
 }
@@ -264,6 +269,7 @@ function renderAccount(st) {
   if (!a) return;
   const live = nowS() - (a.ts || 0) < 60;
   $("liveDot").className = "dot " + (live ? "on" : "off");
+  if (!live) $("staleBanner").textContent = "The EA has not reported for a while. Check that MT5 is running and the bots are on the charts.";
   show("staleBanner", !live);
   $("bal").textContent = money(a.balance);
   $("acct").textContent = (a.accType || "") + " · " + (a.server || "");
