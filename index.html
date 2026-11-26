@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>S4 Trading Dashboard</title>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--line:#2a313c;--txt:#e6edf3;--mut:#8b949e;--up:#26a269;--dn:#e5534b;--acc:#d4a72c;--blue:#4c8dff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt);font-size:15px}
+  header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+  header h1{font-size:17px;margin:0;letter-spacing:.3px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:var(--mut)}
+  .dot.on{background:var(--up)} .dot.off{background:var(--dn)}
+  main{max-width:1100px;margin:0 auto;padding:14px}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .k{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .v{font-size:22px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums}
+  .s{color:var(--mut);font-size:12px;margin-top:2px}
+  .up{color:var(--up)} .dn{color:var(--dn)}
+  h2{font-size:14px;color:var(--mut);margin:22px 2px 8px;text-transform:uppercase;letter-spacing:.6px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  button{border:0;border-radius:10px;padding:12px 16px;font-size:15px;font-weight:600;cursor:pointer;color:#fff}
+  button:disabled{opacity:.5}
+  .b-pause{background:#9a6700} .b-run{background:var(--up)} .b-close{background:var(--dn)} .b-apply{background:var(--blue)} .b-ghost{background:transparent;border:1px solid var(--line);color:var(--txt);padding:8px 12px;font-size:13px}
+  label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut)}
+  input{background:#0d1117;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:10px;font-size:16px;width:100%}
+  .risk{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:500}
+  .tbl{overflow-x:auto}
+  .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:#21262d}
+  .pill.AUTO{background:#1a3d2a;color:#56d364} .pill.PAUSED{background:#3d2e00;color:#e3b341}
+  .pill.stop{background:#3d1416;color:#ff7b72} .pill.stale{background:#21262d;color:var(--mut)}
+  .note{color:var(--mut);font-size:12px;margin-top:8px}
+  .ack{font-size:12px;color:var(--acc);margin-top:8px;min-height:16px}
+  svg{width:100%;height:180px;display:block}
+  .center{max-width:380px;margin:40px auto}
+  .center .card{display:flex;flex-direction:column;gap:12px}
+  .err{color:var(--dn);font-size:13px;min-height:16px}
+  .hide{display:none!important}
+  select{background:#161b22;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font-size:14px;max-width:230px}
+  .banner{background:#3d2e00;color:#e3b341;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1><span id="liveDot" class="dot"></span>S4 Trading</h1>
+  <div class="row"><select id="accSel" class="hide" aria-label="Trading account"></select><span id="who" class="s"></span><button id="logoutBtn" class="b-ghost hide">Log out</button></div>
+</header>
+
+<!-- First run: Firebase project settings (saved on this device only) -->
+<section id="cfgView" class="center hide">
+  <div class="card">
+    <div class="k">Connect to your Firebase project</div>
+    <label>Web API key<input id="cfgKey" autocomplete="off"></label>
+    <label>Project ID<input id="cfgProj" autocomplete="off" placeholder="my-s4-dashboard"></label>
+    <label>Realtime Database URL<input id="cfgUrl" autocomplete="off" placeholder="https://....firebasedatabase.app"></label>
+    <button id="cfgSave" class="b-apply">Save</button>
+    <div class="note">Saved on this device only. Found in Firebase console → Project settings → Your apps → Web app.</div>
+  </div>
+</section>
+
+<!-- Login -->
+<section id="loginView" class="center hide">
+  <div class="card">
+    <div class="k">Sign in</div>
+    <label>Email<input id="email" type="email" autocomplete="username"></label>
+    <label>Password<input id="pass" type="password" autocomplete="current-password"></label>
+    <button id="loginBtn" class="b-apply">Sign in</button>
+    <div id="loginErr" class="err"></div>
+    <button id="cfgReset" class="b-ghost">Change Firebase project</button>
+  </div>
+</section>
+
+<!-- Dashboard -->
+<main id="appView" class="hide">
+  <div id="staleBanner" class="banner hide">The EA has not reported for a while. Check that MT5 is running and the bots are on the charts.</div>
+
+  <div class="grid">
+    <div class="card"><div class="k">Balance</div><div class="v" id="bal">-</div><div class="s" id="acct">-</div></div>
+    <div class="card"><div class="k">Equity</div><div class="v" id="eq">-</div><div class="s" id="ml">-</div></div>
+    <div class="card"><div class="k">Floating P/L</div><div class="v" id="pl">-</div><div class="s" id="openN">-</div></div>
+    <div class="card"><div class="k">Today loss</div><div class="v" id="dl">-</div><div class="s" id="dlLim">-</div></div>
+    <div class="card"><div class="k">Week loss</div><div class="v" id="wl">-</div><div class="s" id="wlLim">-</div></div>
+    <div class="card"><div class="k">Trading</div><div class="v" id="state">-</div><div class="s" id="upd">-</div></div>
+  </div>
+
+  <h2>Controls</h2>
+  <div class="card">
+    <div class="row">
+      <button id="pauseBtn" class="b-pause">⏸ Pause all</button>
+      <button id="resumeBtn" class="b-run">▶ Resume</button>
+      <button id="closeBtn" class="b-close">✕ Close all trades</button>
+    </div>
+    <div class="risk">
+      <label>Risk per trade %<input id="rRisk" type="number" step="0.1" min="0.1" max="10" inputmode="decimal"></label>
+      <label>Daily stop %<input id="rDaily" type="number" step="0.5" min="1" max="50" inputmode="decimal"></label>
+      <label>Weekly stop %<input id="rWeekly" type="number" step="0.5" min="1" max="50" inputmode="decimal"></label>
+    </div>
+    <button id="applyBtn" class="b-apply">Apply risk settings</button>
+    <div class="note">Limits: risk 0.1–10%, daily and weekly stop 1–50%. Applies to all symbols on the next trade. Open trades keep their SL/TP.</div>
+    <div class="ack" id="ack"></div>
+  </div>
+
+  <h2>Equity</h2>
+  <div class="card"><svg id="chart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg><div class="s" id="chartNote"></div></div>
+
+  <h2>Symbols</h2>
+  <div class="card tbl">
+    <table><thead><tr><th>Symbol</th><th>Status</th><th>Position</th><th>Condition</th><th>Stats</th></tr></thead>
+    <tbody id="symBody"><tr><td colspan="5" class="s">Waiting for the EA…</td></tr></tbody></table>
+  </div>
+
+  <h2>Recent trades</h2>
+  <div class="card tbl">
+    <table><thead><tr><th>Time (MYT)</th><th>Symbol</th><th>Side</th><th>Result</th><th>Reason</th></tr></thead>
+    <tbody id="trBody"><tr><td colspan="5" class="s">No closed trades yet.</td></tr></tbody></table>
+    <div class="s" id="trSum"></div>
+  </div>
+
+  <h2>Account progress</h2>
+  <div class="grid">
+    <div class="card"><div class="k">All trades</div><div class="v" id="pgN">-</div><div class="s" id="pgWin">-</div></div>
+    <div class="card"><div class="k">Net result</div><div class="v" id="pgNet">-</div><div class="s" id="pgPF">-</div></div>
+    <div class="card"><div class="k">Since first record</div><div class="v" id="pgGrow">-</div><div class="s" id="pgFrom">-</div></div>
+    <div class="card"><div class="k">Best / worst trade</div><div class="v" id="pgBest">-</div><div class="s" id="pgWorst">-</div></div>
+  </div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, onValue, update, query, limitToLast, limitToFirst } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// Optional: fill these in to skip the first-run form on every device.
+const FIXED_CONFIG = { apiKey: "", projectId: "", databaseURL: "" };
+
+const $ = id => document.getElementById(id);
+const show = (id, on) => $(id).classList.toggle("hide", !on);
+const money = v => (v == null || isNaN(v)) ? "-" : (v < 0 ? "-" : "") + "$" + Math.abs(v).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+const pct = v => (v == null || isNaN(v)) ? "-" : Number(v).toFixed(1) + "%";
+const sign = (el, v) => { el.classList.toggle("up", v > 0); el.classList.toggle("dn", v < 0); };
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const nowS = () => Date.now() / 1000;
+const myt = t => new Date(t * 1000).toLocaleString("en-GB", {timeZone:"Asia/Kuala_Lumpur", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit"});
+const ago = t => { const s = Math.max(0, Math.round(nowS() - t)); return s < 60 ? s + "s ago" : s < 3600 ? Math.round(s/60) + "m ago" : Math.round(s/3600) + "h ago"; };
+
+function loadCfg() {
+  if (FIXED_CONFIG.apiKey && FIXED_CONFIG.databaseURL) return FIXED_CONFIG;
+  try { return JSON.parse(localStorage.getItem("s4cfg") || "null"); } catch { return null; }
+}
+
+let cfg = loadCfg();
+if (!cfg) {
+  show("cfgView", true);
+  $("cfgSave").onclick = () => {
+    const c = { apiKey: $("cfgKey").value.trim(), projectId: $("cfgProj").value.trim(), databaseURL: $("cfgUrl").value.trim().replace(/\/+$/, "") };
+    if (!c.apiKey || !c.projectId || !c.databaseURL.startsWith("https://")) { alert("Fill in all three fields. The database URL starts with https://"); return; }
+    try { localStorage.setItem("s4cfg", JSON.stringify(c)); } catch {}
+    location.reload();
+  };
+} else {
+  start(cfg);
+}
+
+function start(c) {
+  const app = initializeApp({ apiKey: c.apiKey, authDomain: c.projectId + ".firebaseapp.com", projectId: c.projectId, databaseURL: c.databaseURL });
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+  setPersistence(auth, browserLocalPersistence).catch(() => {});
+
+  $("cfgReset").onclick = () => { try { localStorage.removeItem("s4cfg"); } catch {} location.reload(); };
+  $("loginBtn").onclick = async () => {
+    $("loginErr").textContent = "";
+    try { await signInWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value); }
+    catch (e) { $("loginErr").textContent = "Sign-in failed: " + (e.code || e.message); }
+  };
+  $("pass").addEventListener("keydown", e => { if (e.key === "Enter") $("loginBtn").click(); });
+  $("logoutBtn").onclick = () => signOut(auth);
+
+  let unsub = [], unIdx = null, curAcc = null;
+  const pick = acc => {
+    if (acc === curAcc) return;
+    curAcc = acc; try { localStorage.setItem("s4acc", acc); } catch {}
+    unsub.forEach(f => f()); unsub = [];
+    resetView();
+    unsub = wire(db, "s4/acc/" + acc);
+  };
+  $("accSel").onchange = e => pick(e.target.value);
+  onAuthStateChanged(auth, user => {
+    unsub.forEach(f => f()); unsub = []; if (unIdx) { unIdx(); unIdx = null; } curAcc = null;
+    show("loginView", !user); show("appView", !!user); show("logoutBtn", !!user); show("accSel", !!user);
+    $("who").textContent = user ? user.email : "";
+    if (!user) return;
+    unIdx = onValue(ref(db, "s4/index"), snap => {
+      const idx = snap.val() || {};
+      const list = Object.values(idx).filter(a => a && a.login).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+      if (!list.length) { $("accSel").innerHTML = "<option>Waiting for the EA…</option>"; return; }
+      const saved = (() => { try { return localStorage.getItem("s4acc"); } catch { return null; } })();
+      const want = curAcc || (idx[saved] ? saved : list[0].login);
+      $("accSel").innerHTML = list.map(a => `<option value="${esc(a.login)}">${esc(a.type)} · ${esc(a.login)} · ${esc(a.server)}</option>`).join("");
+      $("accSel").value = want;
+      pick(want);
+    });
+  });
+}
+
+function resetView() {
+  ["bal","acct","eq","ml","pl","openN","dl","dlLim","wl","wlLim","state","upd","pgN","pgWin","pgNet","pgPF","pgGrow","pgFrom","pgBest","pgWorst","chartNote","trSum"].forEach(id => $(id).textContent = "-");
+  $("ack").textContent = ""; $("chart").innerHTML = "";
+  $("symBody").innerHTML = '<tr><td colspan="5" class="s">Waiting for the EA…</td></tr>';
+  $("trBody").innerHTML = '<tr><td colspan="5" class="s">No closed trades yet.</td></tr>';
+}
+
+function wire(db, base) {
+  const st = { account: null, symbols: {}, control: {}, editing: false, trades: [], first: null };
+  const subs = [];
+  const on = (path, cb) => subs.push(onValue(path, s => cb(s.val()), err => { $("ack").textContent = "Read error: " + err.message + " (check the database rules)"; }));
+
+  on(ref(db, base + "/account"), v => { st.account = v; renderAccount(st); renderProgress(st); });
+  on(ref(db, base + "/symbols"), v => { st.symbols = v || {}; renderSymbols(st); renderAccount(st); });
+  on(ref(db, base + "/control"), v => { st.control = v || {}; fillRisk(st); });
+  on(ref(db, base + "/controlAck"), v => { if (v) $("ack").textContent = "EA applied: " + v.applied + " (" + ago(v.ts) + ")"; });
+  on(query(ref(db, base + "/trades"), limitToLast(2000)), v => { st.trades = Object.values(v || {}); renderTrades(v); renderProgress(st); });
+  on(query(ref(db, base + "/equity"), limitToLast(288)), v => renderChart(v));
+  on(query(ref(db, base + "/equity"), limitToFirst(1)), v => { st.first = Object.values(v || {})[0] || null; renderProgress(st); });
+
+  const ctl = (obj, msg) => update(ref(db, base + "/control"), obj)
+      .then(() => { $("ack").textContent = msg + " Sent. Waiting for the EA…"; })
+      .catch(e => { $("ack").textContent = "Not sent: " + e.message; });
+
+  $("pauseBtn").onclick  = () => ctl({ pause: true },  "Pause all:");
+  $("resumeBtn").onclick = () => ctl({ pause: false }, "Resume:");
+  $("closeBtn").onclick  = () => {
+    const n = Object.values(st.symbols).filter(s => s && s.pos).length;
+    if (confirm("Close ALL open S4 trades now" + (n ? " (" + n + " open)" : "") + "? This cannot be undone.")) ctl({ closeAll: nowS() }, "Close all:");
+  };
+  $("applyBtn").onclick = () => {
+    const r = parseFloat($("rRisk").value), d = parseFloat($("rDaily").value), w = parseFloat($("rWeekly").value);
+    if (!(r >= 0.1 && r <= 10) || !(d >= 1 && d <= 50) || !(w >= 1 && w <= 50)) { alert("Risk must be 0.1–10%, daily and weekly stop 1–50%."); return; }
+    if (confirm(`Apply to all symbols?\nRisk per trade: ${r}%\nDaily stop: ${d}%\nWeekly stop: ${w}%`)) { st.editing = false; ctl({ riskPct: r, dailyPct: d, weeklyPct: w }, "Risk settings:"); }
+  };
+  ["rRisk","rDaily","rWeekly"].forEach(id => $(id).addEventListener("input", () => st.editing = true));
+
+  const tick = setInterval(() => { renderAccount(st); renderSymbols(st); }, 5000);
+  return [...subs, () => clearInterval(tick)];
+}
+
+function fillRisk(st) {
+  if (st.editing) return;
+  const a = st.account || {}, c = st.control || {};
+  $("rRisk").value   = c.riskPct   ?? a.riskPct   ?? "";
+  $("rDaily").value  = c.dailyPct  ?? a.dailyPct  ?? "";
+  $("rWeekly").value = c.weeklyPct ?? a.weeklyPct ?? "";
+}
+
+function renderAccount(st) {
+  const a = st.account;
+  if (!a) return;
+  const live = nowS() - (a.ts || 0) < 60;
+  $("liveDot").className = "dot " + (live ? "on" : "off");
+  show("staleBanner", !live);
+  $("bal").textContent = money(a.balance);
+  $("acct").textContent = (a.accType || "") + " · " + (a.server || "");
+  $("eq").textContent = money(a.equity);
+  $("ml").textContent = a.marginLevel > 0 ? "Margin level " + Math.round(a.marginLevel) + "%" : "No margin used";
+  $("pl").textContent = money(a.profit); sign($("pl"), a.profit);
+  $("openN").textContent = Object.values(st.symbols).filter(s => s && s.pos).length + " open trade(s)";
+  $("dl").textContent = pct(a.dayLossPct); $("dl").classList.toggle("dn", a.dayLossPct >= a.dailyPct * 0.75);
+  $("dlLim").textContent = "Stop at " + pct(a.dailyPct);
+  $("wl").textContent = pct(a.weekLossPct); $("wl").classList.toggle("dn", a.weekLossPct >= a.weeklyPct * 0.75);
+  $("wlLim").textContent = "Stop at " + pct(a.weeklyPct);
+  $("state").textContent = a.paused ? "PAUSED" : "AUTO";
+  $("state").className = "v " + (a.paused ? "dn" : "up");
+  $("upd").textContent = "Risk " + pct(a.riskPct) + "/trade · updated " + ago(a.ts);
+  if (!st.editing && !st.control.riskPct) fillRisk(st);
+}
+
+function renderSymbols(st) {
+  const rows = Object.entries(st.symbols).sort(([a],[b]) => a.localeCompare(b));
+  if (!rows.length) return;
+  $("symBody").innerHTML = rows.map(([sym, s]) => {
+    const stale = nowS() - (s.ts || 0) > 90;
+    const status = stale ? "OFFLINE" : (s.status || "-");
+    const cls = stale ? "stale" : (status === "AUTO" ? "AUTO" : status === "PAUSED" ? "PAUSED" : "stop");
+    const p = s.pos;
+    const pos = p ? `<b class="${p.dir === "BUY" ? "up" : "dn"}">${esc(p.dir)}</b> ${esc(p.lots)} @ ${esc(p.entry)}<br><span class="s">SL ${esc(p.sl)} · TP ${esc(p.tp)}</span><br><b class="${p.pl >= 0 ? "up" : "dn"}">${money(p.pl)}</b>` : `<span class="s">none</span>`;
+    const wr = s.trades ? Math.round(100 * s.wins / s.trades) + "%" : "-";
+    return `<tr><td><b>${esc(sym)}</b><br><span class="s">${esc(s.strategy)}</span></td>
+      <td><span class="pill ${cls}">${esc(status)}</span><br><span class="s">${ago(s.ts)}</span></td>
+      <td>${pos}</td>
+      <td>${esc(s.cond)}<br><span class="s">Last signal: ${esc(s.lastSig)}<br>Last skip: ${esc(s.lastSkip)}</span></td>
+      <td>${s.trades || 0} trades<br>win ${wr}<br><b class="${s.net >= 0 ? "up" : "dn"}">${money(s.net)}</b></td></tr>`;
+  }).join("");
+}
+
+function renderTrades(v) {
+  const list = Object.values(v || {}).sort((a, b) => b.t - a.t).slice(0, 30);
+  if (!list.length) return;
+  $("trBody").innerHTML = list.slice(0, 30).map(t => `<tr><td>${myt(t.t)}</td><td>${esc(t.sym)}</td>
+      <td class="${t.dir === "BUY" ? "up" : "dn"}">${esc(t.dir)}</td>
+      <td class="${t.profit >= 0 ? "up" : "dn"}"><b>${money(t.profit)}</b></td><td class="s">${esc(t.reason)}</td></tr>`).join("");
+  const w = list.filter(t => t.profit > 0).length, net = list.reduce((s, t) => s + (t.profit || 0), 0);
+  $("trSum").textContent = `Last ${list.length}: win ${Math.round(100 * w / list.length)}% · net ${money(net)}`;
+}
+
+function renderProgress(st) {
+  const t = st.trades || [];
+  if (t.length) {
+    const w = t.filter(x => x.profit > 0), l = t.filter(x => x.profit <= 0);
+    const gp = w.reduce((s, x) => s + x.profit, 0), gl = -l.reduce((s, x) => s + x.profit, 0);
+    $("pgN").textContent = t.length; $("pgWin").textContent = "Win rate " + Math.round(100 * w.length / t.length) + "%";
+    $("pgNet").textContent = money(gp - gl); sign($("pgNet"), gp - gl);
+    $("pgPF").textContent = "Profit factor " + (gl > 0 ? (gp / gl).toFixed(2) : "∞") + " (above 1.00 = profitable)";
+    $("pgBest").textContent = money(Math.max(...t.map(x => x.profit))); $("pgWorst").textContent = "Worst " + money(Math.min(...t.map(x => x.profit)));
+  }
+  const f = st.first, a = st.account;
+  if (f && a && f.bal > 0) {
+    const g = (a.balance - f.bal) / f.bal * 100;
+    $("pgGrow").textContent = (g >= 0 ? "+" : "") + g.toFixed(1) + "%"; sign($("pgGrow"), g);
+    $("pgFrom").textContent = "Balance " + money(f.bal) + " on " + myt(f.t) + " → " + money(a.balance);
+  }
+}
+
+function renderChart(v) {
+  const pts = Object.values(v || {}).filter(p => p && p.t && p.eq != null).sort((a, b) => a.t - b.t);
+  const svg = $("chart");
+  if (pts.length < 2) { svg.innerHTML = ""; $("chartNote").textContent = "The chart fills in as the EA reports (one point every 5 minutes)."; return; }
+  const W = 600, H = 180, pad = 8;
+  const vals = pts.flatMap(p => [p.eq, p.bal ?? p.eq]);
+  let lo = Math.min(...vals), hi = Math.max(...vals); if (hi - lo < 1) { hi += 0.5; lo -= 0.5; }
+  const x = i => pad + i * (W - 2 * pad) / (pts.length - 1);
+  const y = val => H - pad - (val - lo) * (H - 2 * pad) / (hi - lo);
+  const line = key => pts.map((p, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(p[key] ?? p.eq).toFixed(1)).join(" ");
+  const up = pts[pts.length - 1].eq >= pts[0].eq;
+  const col = up ? "#26a269" : "#e5534b";
+  svg.innerHTML = `<path d="${line("eq")} L${x(pts.length-1)} ${H} L${x(0)} ${H} Z" fill="${col}" opacity="0.12"/>
+    <path d="${line("bal")}" fill="none" stroke="#8b949e" stroke-width="1.2" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>
+    <path d="${line("eq")}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+  $("chartNote").textContent = `${myt(pts[0].t)} → ${myt(pts[pts.length-1].t)} · low ${money(lo)} · high ${money(hi)} · solid = equity, dashed = balance`;
+}
+</script>
+</body>
+</html>
