@@ -71,8 +71,8 @@ button{font-family:Inter,sans-serif;cursor:pointer}
 .tr .a{font-size:13px;font-weight:600}.tr .b{font-size:11px;color:var(--mut);margin-top:2px}
 .ack{font-size:12px;color:var(--lime);min-height:16px}
 .foot{font-size:11px;color:var(--dim);text-align:center;line-height:1.5}
-.nav{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 10px);max-width:496px;margin:0 auto;height:64px;background:var(--card);border:1px solid var(--line);border-radius:20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:6px;gap:6px;z-index:10}
-.nav button{border:0;background:transparent;color:var(--mut);border-radius:14px;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.nav{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 10px);max-width:496px;margin:0 auto;height:64px;background:var(--card);border:1px solid var(--line);border-radius:20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px;gap:5px;z-index:10}
+.nav button{border:0;background:transparent;color:var(--mut);border-radius:14px;font-size:10.5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .nav button.on{background:var(--lime);color:var(--bg);font-weight:700}
 .banner{background:#2e2410;color:var(--amber);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:10px}
 .center{max-width:380px;margin:60px auto;padding:0 16px}
@@ -106,7 +106,7 @@ button{font-family:Inter,sans-serif;cursor:pointer}
 
 <main id="appView" class="wrap hide">
   <div class="top">
-    <div><h1 id="pgTitle">Overview</h1><div class="sub" id="pgSub">S4 bot performance &amp; progress</div></div>
+    <div><h1 id="hello" style="cursor:pointer">Hi there!</h1><div class="sub"><b id="pgTitle" style="color:var(--txt);font-weight:600">Overview</b> · <span id="pgSub">S4 bot performance &amp; progress</span></div></div>
     <span class="live"><span id="liveDot" class="dot"></span><span id="liveTxt">-</span></span>
   </div>
   <div id="banner" class="banner hide"></div>
@@ -123,12 +123,22 @@ button{font-family:Inter,sans-serif;cursor:pointer}
 
   <!-- CURRENCIES -->
   <section id="pCur" class="stack hide">
-    <div style="display:grid;grid-template-columns:1.1fr 1fr 1.2fr;gap:8px">
+    <div class="g2" style="gap:8px">
       <label class="fl">Currency<select id="cSym"></select></label>
+      <label class="fl">Show<select id="cShow"><option value="all">All</option><option value="trade">Trades only</option><option value="skip">Skips only</option></select></label>
       <label class="fl">View<select id="cType"><option value="D">Daily</option><option value="W">Weekly</option><option value="M">Monthly</option></select></label>
       <label class="fl">Period<select id="cPer"></select></label>
     </div>
     <div id="cBody" class="stack"></div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section id="pCon" class="stack hide">
+    <div class="g2">
+      <label class="fl">View<select id="kType"><option value="D">Daily</option><option value="W">Weekly</option><option value="M">Monthly</option></select></label>
+      <label class="fl">Period<select id="kPer"></select></label>
+    </div>
+    <div id="kBody" class="stack"></div>
   </section>
 
   <!-- CONTROL -->
@@ -138,6 +148,7 @@ button{font-family:Inter,sans-serif;cursor:pointer}
 <nav id="nav" class="nav hide">
   <button data-tab="sum" class="on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Summary</button>
   <button data-tab="cur"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>Currencies</button>
+  <button data-tab="con"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z"/></svg>Conclusion</button>
   <button data-tab="ctl"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Control</button>
 </nav>
 
@@ -226,7 +237,7 @@ if (!cfg) {
 
 /* ---------- app state ---------- */
 const S = { acc: null, base: null, index: {}, account: null, symbols: {}, trades: [], equity: [], skips: {}, control: {}, ack: null,
-            tab: "sum", sType: "D", sPer: null, cSym: "ALL", cType: "M", cPer: null, open: {}, ctlOpen: null, ctlDirty: true };
+            tab: "sum", sType: "D", sPer: null, cSym: "ALL", cType: "M", cPer: null, cShow: "all", kType: "M", kPer: null, open: {}, ctlOpen: null, ctlDirty: true };
 let db, subs = [];
 
 function start(c) {
@@ -264,6 +275,11 @@ function start(c) {
   $("cSym").onchange = e => { S.cSym = e.target.value; renderCur(); };
   $("cType").onchange = e => { S.cType = e.target.value; S.cPer = null; renderCur(); };
   $("cPer").onchange = e => { S.cPer = e.target.value; renderCur(); };
+  $("cShow").onchange = e => { S.cShow = e.target.value; renderCur(); };
+  $("kType").onchange = e => { S.kType = e.target.value; S.kPer = null; renderCon(); };
+  $("kPer").onchange = e => { S.kPer = e.target.value; renderCon(); };
+  $("hello").onclick = () => { const n = prompt("Your name for the greeting:", userName()); if (n && n.trim()) { try { localStorage.setItem("s4name", n.trim()); } catch {} greet(); } };
+  greet();
   setInterval(() => { renderLive(); }, 5000);
 }
 function banner(msg) { $("banner").textContent = msg || ""; show("banner", !!msg); }
@@ -278,7 +294,7 @@ function pickAcc(acc) {
   on("/symbols", v => { const first = !Object.keys(S.symbols).length; S.symbols = v || {}; if (first) S.ctlDirty = true; renderAll(); });
   onq("/trades", 5000, v => { S.trades = Object.values(v || {}).filter(t => t && t.t).sort((a, b) => a.t - b.t); renderAll(); });
   onq("/equity", 3000, v => { S.equity = Object.values(v || {}).filter(p => p && p.t).sort((a, b) => a.t - b.t); if (S.tab === "sum") renderSum(); });
-  on("/skips", v => { S.skips = v || {}; if (S.tab === "cur") renderCur(); });
+  on("/skips", v => { S.skips = v || {}; if (S.tab === "cur") renderCur(); if (S.tab === "con") renderCon(); });
   on("/control", v => { const first = !S.control || !Object.keys(S.control).length; S.control = v || {}; if (first) S.ctlDirty = true; if (S.tab === "ctl") renderCtl(); });
   on("/controlAck", v => { S.ack = v; const el = $("ackLine"); if (el && v) el.textContent = "✓ EA applied: " + v.applied + " · " + ago(v.ts); });
   renderAll();
@@ -286,13 +302,15 @@ function pickAcc(acc) {
 function setTab(t) {
   S.tab = t;
   document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
-  show("pSum", t === "sum"); show("pCur", t === "cur"); show("pCtl", t === "ctl");
-  const T = { sum: ["Overview", "S4 bot performance & progress"], cur: ["Currencies", "Performance by symbol"], ctl: ["Control", "Risk, stop & trade settings"] }[t];
+  show("pSum", t === "sum"); show("pCur", t === "cur"); show("pCtl", t === "ctl"); show("pCon", t === "con");
+  const T = { sum: ["Overview", "performance & progress"], cur: ["Currencies", "performance by symbol"], con: ["Conclusion", "what to adjust"], ctl: ["Control", "risk, stop & trade settings"] }[t];
   $("pgTitle").textContent = T[0]; $("pgSub").textContent = T[1];
   if (t === "ctl") S.ctlDirty = true;
   renderAll(); window.scrollTo(0, 0);
 }
-function renderAll() { renderLive(); if (S.tab === "sum") renderSum(); else if (S.tab === "cur") renderCur(); else renderCtl(); }
+function renderAll() { renderLive(); if (S.tab === "sum") renderSum(); else if (S.tab === "cur") renderCur(); else if (S.tab === "con") renderCon(); else renderCtl(); }
+function userName() { try { return localStorage.getItem("s4name") || "Raqib"; } catch { return "Raqib"; } }
+function greet() { const h = mytParts(nowS()).h; $("hello").textContent = `Hi ${userName()}!`; $("hello").title = (h < 12 ? "Good morning" : h < 19 ? "Good afternoon" : "Good evening") + " · tap to change name"; }
 function renderLive() {
   const a = S.account;
   if (!a) { $("liveDot").className = "dot"; $("liveTxt").textContent = "Waiting"; return; }
@@ -372,19 +390,49 @@ function equityCard(P, tr, b0) {
     <div style="display:flex;gap:14px;font-size:11px;color:var(--mut);margin-top:6px"><span><b style="color:var(--lime)">—</b> Balance after each trade</span><span>- - Live equity</span></div></div>`;
 }
 function barsCard(P) {
-  let days = [];
-  if (S.sType === "D") { for (let i = 6; i >= 0; i--) days.push(P.s - i * DAY); }
-  else { for (let s = P.s; s < P.e; s += DAY) days.push(s); }
-  const vals = days.map(s => S.trades.filter(t => t.t >= s && t.t < s + DAY).reduce((x, t) => x + t.profit, 0));
-  const mx = Math.max(1e-9, ...vals.map(Math.abs));
-  const today = dayStart(nowS()), hlDay = S.sType === "D" ? P.s : (days.includes(today) ? today : days[days.length - 1]);
-  const many = days.length > 10;
-  const bars = days.map((s, i) => { const v = vals[i], hl = s === hlDay, ht = Math.max(8, Math.abs(v) / mx * 100);
-    return `<div class="bar${v < 0 ? " neg" : ""}${hl && v !== 0 ? " hl" : ""}" style="height:${v === 0 ? 8 : ht}%" title="${money(v)}">${v !== 0 && !hl ? '<span class="cap"></span>' : ""}${hl && v !== 0 && !many ? `<span style="position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:10px;font-weight:700;color:#0a0b0a">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>` : ""}</div>`; }).join("");
-  const labels = days.map((s, i) => { const p = mytParts(s + 1); const txt = many ? (i % 5 === 0 || i === days.length - 1 ? p.d : "") : (S.sType === "M" ? p.d : WD[p.wd]); return `<span style="${s === hlDay ? "color:var(--txt);font-weight:700" : ""}">${txt}</span>`; }).join("");
-  const sum = vals.reduce((a, b) => a + b, 0);
-  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Daily P/L</span>${badge(sum, money(sum))}</div>
-    <div class="bars">${bars}</div><div class="xl">${labels}</div></div>`;
+  // buckets: Daily = Mon..Fri of the selected week (Fri includes Sat/Sun); Weekly = last 5 weeks; Monthly = last 5 months
+  const B = [];
+  if (S.sType === "D") {
+    const ws = weekStart(P.s);
+    for (let i = 0; i < 5; i++) { const s = ws + i * DAY, e = i === 4 ? ws + 7 * DAY : s + DAY; B.push({ s, e, lab: i === 4 ? "Fri–Sat" : WD[i] }); }
+  } else if (S.sType === "W") {
+    for (let i = 4; i >= 0; i--) { const s = P.s - i * 7 * DAY, a = mytParts(s + 1); B.push({ s, e: s + 7 * DAY, lab: `${a.d} ${MON[a.m]}` }); }
+  } else {
+    const p = mytParts(P.s + 1);
+    for (let i = 4; i >= 0; i--) { let y = p.y, m = p.m - i; while (m < 0) { m += 12; y--; } B.push({ s: monthStart(y, m), e: monthStart(m === 11 ? y + 1 : y, (m + 1) % 12), lab: MON[m] }); }
+  }
+  const balNow = S.account ? S.account.balance : null;
+  B.forEach(b => {
+    const l = S.trades.filter(t => t.t >= b.s && t.t < b.e);
+    b.has = l.length > 0;
+    b.net = l.reduce((x, t) => x + t.profit, 0);
+    b.bal = balNow == null ? null : balNow - S.trades.filter(t => t.t >= b.e).reduce((x, t) => x + t.profit, 0);   // deposit + net P/L at the end of the bar
+    b.hl = P.s >= b.s && P.s < b.e;
+  });
+  const vals = B.filter(b => b.has && b.bal != null).map(b => b.bal);
+  const top = vals.length ? Math.max(...vals) : 0;
+  const step = top > 0 ? Math.pow(10, Math.floor(Math.log10(top))) / 2 : 1, ymax = top > 0 ? Math.ceil(top * 1.08 / step) * step : 1;
+  const ticks = [1, .75, .5, .25, 0].map(f => ymax * f);
+  const fmtK = v => v >= 10000 ? (v / 1000).toFixed(0) + "k" : v >= 1000 ? (v / 1000).toFixed(1) + "k" : Math.round(v);
+  const cols = B.map(b => {
+    if (!b.has || b.bal == null) return `<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%"><div style="width:100%;height:3px;border-radius:2px;background:#1e211d"></div></div>`;
+    const h = Math.max(4, b.bal / ymax * 100), neg = b.net < 0;
+    const lbl = `<span class="${neg ? "dn" : "up"}" style="font-size:10px;padding:2px 5px;margin-bottom:5px;${b.hl ? (neg ? "background:#ff7a6b;color:#0a0b0a" : "background:#c5f36b;color:#0a0b0a") : ""}">${neg ? "−" : "+"}$${Math.abs(b.net).toFixed(2)}</span>`;
+    const bar = b.hl
+      ? `<div style="width:100%;height:${h}%;border-radius:9px;background:${neg ? "#ff7a6b" : "#c5f36b"}"></div>`
+      : `<div class="bar${neg ? " neg" : ""}" style="width:100%;flex:none;height:${h}%"><span class="cap"></span></div>`;
+    return `<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%">${lbl}${bar}</div>`;
+  }).join("");
+  const labels = B.map(b => `<span style="${b.hl ? "color:var(--txt);font-weight:700" : ""}">${b.lab}</span>`).join("");
+  const sum = B.filter(b => b.hl).reduce((x, b) => x + b.net, 0);
+  const title = { D: "Daily P/L · this week", W: "Weekly P/L · last 5 weeks", M: "Monthly P/L · last 5 months" }[S.sType];
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">${title}</span>${badge(sum, money(sum))}</div>
+    <div style="display:flex;gap:6px;margin-top:14px">
+      <div style="display:flex;flex-direction:column;justify-content:space-between;height:170px;font-size:9.5px;color:var(--mut);text-align:right;min-width:28px">${ticks.map(v => `<span>${fmtK(v)}</span>`).join("")}</div>
+      <div style="flex:1;min-width:0"><div style="height:170px;display:flex;align-items:flex-end;gap:8px;background:linear-gradient(#1e211d 1px,transparent 1px) 0 0/100% 25%">${cols}</div>
+      <div class="xl" style="gap:8px">${labels}</div></div>
+    </div>
+    <div class="sub" style="margin-top:8px">Bar height = balance (deposit + net P/L) at the end of each ${S.sType === "D" ? "day" : S.sType === "W" ? "week" : "month"} · label = net P/L · blank = no trades</div></div>`;
 }
 function insightCard(tr, st) {
   let t;
@@ -431,7 +479,7 @@ function renderCur() {
   const keys = symKeys();
   $("cSym").innerHTML = `<option value="ALL">All</option>` + keys.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join("");
   if (S.cSym !== "ALL" && !keys.includes(S.cSym)) S.cSym = "ALL";
-  $("cSym").value = S.cSym; $("cType").value = S.cType;
+  $("cSym").value = S.cSym; $("cType").value = S.cType; $("cShow").value = S.cShow;
   const list = fillPeriods("cPer", S.cType, S.trades, S.cPer); S.cPer = $("cPer").value;
   const P = list.find(p => p.v === S.cPer);
   const mine = S.trades.filter(t => S.cSym === "ALL" || tKey(t) === S.cSym);
@@ -440,7 +488,10 @@ function renderCur() {
   const sy = S.symbols[S.cSym], cfg = sy && sy.cfg;
   const status = S.cSym === "ALL" ? "" : statusBadge(sy);
   const cfgTxt = cfg ? `Lot ${cfg.lotMode === "manual" ? "manual " + cfg.lot : "auto " + cfg.risk + "%"}${cfg.cap > 0 ? " (max " + cfg.cap + ")" : ""} · SL/TP ${cfg.sltpMode === "manual" ? `manual ${cfg.sl}/${cfg.tp} ${cfg.unit}` : "auto (ATR)"} · max ${cfg.maxOpen} open` : (S.cSym === "ALL" ? "All S4 currencies" : "");
-  let h = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="lbl">${esc(S.cSym === "ALL" ? "All currencies" : S.cSym + (sy ? " · " + sy.strategy : ""))}</span>${status}</div>
+  const showT = S.cShow !== "skip", showK = S.cShow !== "trade";
+  let h = "";
+  if (showT) {
+  h += `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="lbl">${esc(S.cSym === "ALL" ? "All currencies" : S.cSym + (sy ? " · " + sy.strategy : ""))}</span>${status}</div>
     <div style="display:flex;align-items:center;gap:8px;margin-top:10px"><span class="n" style="font-size:30px;font-weight:700">${money(st.net)}</span>${badge(g, pct(Math.abs(g)))}</div>
     <div class="sub" style="margin-top:2px">${esc(cfgTxt)}</div>
     <div class="g3" style="margin-top:12px">
@@ -461,13 +512,14 @@ function renderCur() {
   h += `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Buy vs Sell</span><span class="lbl">${esc(P.label)}</span></div><div class="stack" style="margin-top:12px;gap:12px">${sideRow("BUY", B, "var(--lime)")}${sideRow("SELL", Sx, "var(--lime2)")}</div></div>`;
   h += heatmap(tr);
   h += calendar(mine, P);
-  h += skipsCard(P);
+  }
+  if (showK) h += skipsCard(P);
   const recent = tr.slice().reverse();
-  h += `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-weight:600">Trades</span><span class="lbl">${tr.length} in period</span></div>
+  if (showT) h += `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-weight:600">Trades</span><span class="lbl">${tr.length} in period</span></div>
     ${recent.length ? recent.slice(0, 150).map(t => `<div class="tr"><div><div class="a">${S.cSym === "ALL" ? esc(tKey(t)) + " " : ""}${esc(t.dir)} ${t.lots ?? ""} @ ${t.entry ?? "-"}</div><div class="b">${t.o ? fmtT(t.o) + " → " + fmtHM(t.t) : fmtT(t.t)} · ${esc(t.reason)}</div></div>${badge(t.profit, money(t.profit))}</div>`).join("") : `<div class="empty">No closed trades in this period.</div>`}</div>
     <button class="pri" id="cExport">⤓ Export ${esc(S.cSym === "ALL" ? "all" : S.cSym)} trades (CSV)</button>`;
   $("cBody").innerHTML = h;
-  $("cExport").onclick = () => exportCsv(tr, `S4_${S.acc}_${S.cSym}_${P.label.replace(/[^\w]+/g, "_")}.csv`);
+  if ($("cExport")) $("cExport").onclick = () => exportCsv(tr, `S4_${S.acc}_${S.cSym}_${P.label.replace(/[^\w]+/g, "_")}.csv`);
   document.querySelectorAll("[data-day]").forEach(b => b.onclick = () => { S.cType = "D"; S.cPer = b.dataset.day; renderCur(); });
 }
 function statusBadge(sy) {
@@ -508,16 +560,90 @@ function calendar(mine, P) {
   return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Daily P/L · ${MON[p.m]} ${p.y}</span><span class="lbl">Tap a day</span></div>
     <div class="cal" style="color:var(--mut);margin:12px 0 4px">${WD.map(w => `<span>${w[0]}</span>`).join("")}</div><div class="cal">${cells}</div></div>`;
 }
-function skipsCard(P) {
+function skipTotals(keys, P) {
   const tot = {};
-  const keys = S.cSym === "ALL" ? Object.keys(S.skips) : [S.cSym];
   keys.forEach(k => { const byDay = S.skips[k] || {}; Object.entries(byDay).forEach(([day, obj]) => {
     const s = Date.UTC(+day.slice(0, 4), +day.slice(4, 6) - 1, +day.slice(6, 8)) / 1000 - H8;
     if (s >= P.s && s < P.e) Object.entries(obj || {}).forEach(([r, n]) => tot[r] = (tot[r] || 0) + (n || 0)); }); });
+  return tot;
+}
+function skipsCard(P) {
+  const tot = skipTotals(S.cSym === "ALL" ? Object.keys(S.skips) : [S.cSym], P);
   const arr = Object.entries(tot).filter(e => e[1] > 0).sort((a, b) => b[1] - a[1]);
   const cols = ["#c5f36b", "#8fb84a", "#4f6a22", "#3e5320", "#2a2e28", "#2a2e28", "#2a2e28"];
   return `<div class="card"><div style="font-weight:600;margin-bottom:10px">Why it didn't trade <span class="sub" style="font-weight:400">· signals skipped</span></div>
     ${arr.length ? `<div class="stack" style="gap:8px">${arr.map(([r, n], i) => `<div class="tile" style="display:flex;justify-content:space-between;font-size:13px"><span style="display:flex;align-items:center;gap:7px"><span class="sq" style="background:${cols[i]}"></span>${esc(SKIP_TXT[r] || r)}</span><b class="n">${n}</b></div>`).join("")}</div>` : `<div class="empty">No skipped signals recorded in this period.</div>`}</div>`;
+}
+
+/* ---------- CONCLUSION ---------- */
+const FIX = {
+  quiet: "Most signals came when the market was too quiet. Lower the quiet-market filter (InpMinATRRatio, now 0.6) or accept fewer trades.",
+  spread: "Spread was too wide versus the stop. Use manual SL/TP with a wider SL, or raise the spread limit (InpMaxSpreadOfSL).",
+  news: "Signals fell inside news blackouts. Normal; shorten InpNewsMin only if you accept news risk.",
+  lot: "Minimum lot would exceed your risk %. Raise risk %, switch to a manual lot, or use a smaller SL.",
+  margin: "Not enough margin. Lower the lot size or the number of open trades.",
+  maxopen: "Max open trades was reached. Raise max open (1/2/3) for this currency if you want more entries.",
+  limit: "The daily/weekly loss stop blocked entries. Lower risk % so the stop is hit less often."
+};
+function renderCon() {
+  $("kType").value = S.kType;
+  const list = fillPeriods("kPer", S.kType, S.trades, S.kPer); S.kPer = $("kPer").value;
+  const P = list.find(p => p.v === S.kPer);
+  const keys = symKeys();
+  if (!keys.length) { $("kBody").innerHTML = `<div class="card empty">Waiting for the bots to report their currencies…</div>`; return; }
+  const histStart = S.trades.length ? dayStart(S.trades[0].t) : P.s;                  // count days only since records began
+  const days = Math.max(1, Math.round((Math.min(P.e, nowS()) - Math.max(P.s, histStart)) / DAY));
+  const res = keys.map(k => {
+    const tr = S.trades.filter(t => tKey(t) === k && t.t >= P.s && t.t < P.e), st = stats(tr);
+    const sk = skipTotals([k], P), skN = Object.values(sk).reduce((a, b) => a + b, 0);
+    const topSkip = Object.entries(sk).sort((a, b) => b[1] - a[1])[0];
+    const tradeDays = new Set(tr.map(t => dayStart(t.t))).size;
+    // 1) P/L verdict
+    let pl, plWhy = [], plFix = [];
+    if (st.n === 0) { pl = "none"; plWhy.push("No closed trades in this period."); }
+    else {
+      if (st.n < 10) plWhy.push(`Only ${st.n} trade${st.n === 1 ? "" : "s"}: too few to judge reliably (10+ needed).`);
+      if (st.net < 0 || st.pf < 1) {
+        pl = st.n >= 5 ? "adjust" : "watch";
+        plWhy.push(`Losing: net ${money(st.net)}, profit factor ${pfTxt(st.pf)}, win rate ${Math.round(st.wr)}%.`);
+        if (st.al && st.aw && Math.abs(st.al) > st.aw * 1.2) plFix.push(`Average loss (${money(st.al)}) is bigger than average win (${money(st.aw)}). Try manual SL/TP with a closer SL, or a larger TP.`);
+        if (st.wr < 40) plFix.push("Win rate under 40%. The entry signal may be too early; consider a stricter entry or a smaller TP for quicker wins.");
+        const buy = tr.filter(t => t.dir === "BUY").reduce((a, t) => a + t.profit, 0), sell = tr.filter(t => t.dir === "SELL").reduce((a, t) => a + t.profit, 0);
+        if (buy < 0 && sell > 0) plFix.push(`BUY trades lose (${money(buy)}) while SELL trades win (${money(sell)}).`);
+        if (sell < 0 && buy > 0) plFix.push(`SELL trades lose (${money(sell)}) while BUY trades win (${money(buy)}).`);
+        const hrs = {}; tr.forEach(t => { const h = mytParts(t.o || t.t).h; hrs[h] = (hrs[h] || 0) + t.profit; });
+        const wh = Object.entries(hrs).sort((a, b) => a[1] - b[1])[0];
+        if (wh && wh[1] < 0) plFix.push(`Worst entry hour is ${String(wh[0]).padStart(2, "0")}:00 MYT (${money(wh[1])}).`);
+      } else if (st.pf < 1.2) { pl = "watch"; plWhy.push(`Small edge: net ${money(st.net)}, profit factor ${pfTxt(st.pf)}.`); }
+      else { pl = st.n >= 10 ? "ok" : "watch"; plWhy.push(`Profitable: net ${money(st.net)}, profit factor ${pfTxt(st.pf)}, win rate ${Math.round(st.wr)}%.`); }
+    }
+    // 2) no-trade verdict
+    let nt, ntWhy = [], ntFix = [];
+    const share = Math.round(100 * tradeDays / days);
+    if (st.n === 0 && skN === 0) { nt = "adjust"; ntWhy.push(`No trades and no signals in ${days} day${days === 1 ? "" : "s"}.`); ntFix.push("The strategy's conditions or time window are very strict. Consider widening the time window or the RSI bands for this currency."); }
+    else if (st.n === 0) { nt = "adjust"; ntWhy.push(`${skN} signal${skN === 1 ? "" : "s"} came but none were traded.`); if (topSkip) ntFix.push(FIX[topSkip[0]] || ""); }
+    else if (share < 30 && days >= 3) { nt = "watch"; ntWhy.push(`Traded on ${tradeDays} of ${days} days (${share}%).`); if (topSkip && topSkip[1] > st.n) ntFix.push(`${skN} signals were skipped. ${FIX[topSkip[0]] || ""}`); }
+    else { nt = "ok"; ntWhy.push(`Traded on ${tradeDays} of ${days} days, ${st.n} trade${st.n === 1 ? "" : "s"}.`); if (skN) ntWhy.push(`${skN} signal${skN === 1 ? "" : "s"} skipped (mostly: ${SKIP_TXT[topSkip[0]] || topSkip[0]}).`); }
+    const rank = { adjust: 0, watch: 1, none: 2, ok: 3 };
+    return { k, st, pl, plWhy, plFix, nt, ntWhy, ntFix, score: Math.min(rank[pl], rank[nt]) };
+  }).sort((a, b) => a.score - b.score || a.st.net - b.st.net);
+  const tag = v => v === "adjust" ? `<span class="dn">ADJUST</span>` : v === "watch" ? `<span class="wn">WATCH</span>` : v === "ok" ? `<span class="up">OK</span>` : `<span class="nt">NO TRADES</span>`;
+  const need = res.filter(r => r.pl === "adjust" || r.nt === "adjust");
+  let h = `<div class="insight"><span class="tag">✦ Conclusion · ${esc(P.label)}</span><div class="t">${need.length ? `<span class="pill">${need.length}</span> currenc${need.length === 1 ? "y needs" : "ies need"} adjusting: ${need.map(r => esc(r.k)).join(", ")}.` : "No currency needs adjusting yet in this period."}</div></div>`;
+  h += `<div class="card"><div class="lbl" style="margin-bottom:10px">At a glance</div><div class="stack" style="gap:8px">${res.map(r => `<div class="tile" style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center"><b>${esc(r.k)}</b><span style="font-size:10px;color:var(--mut);text-align:right">P/L<br>${tag(r.pl)}</span><span style="font-size:10px;color:var(--mut);text-align:right">Trading<br>${tag(r.nt)}</span></div>`).join("")}</div></div>`;
+  res.forEach(r => {
+    h += `<div class="card stack" style="gap:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:17px;font-weight:700">${esc(r.k)}</span>${badge(r.st.net, money(r.st.net))}</div>
+      <div class="row"><div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">1 · Based on P/L</span>${tag(r.pl)}</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.45">${r.plWhy.map(esc).join("<br>")}</div>
+        ${r.plFix.length ? `<div style="font-size:12px;color:var(--lime);margin-top:8px;line-height:1.45">${r.plFix.map(x => "→ " + esc(x)).join("<br>")}</div>` : ""}</div>
+      <div class="row"><div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">2 · Based on no trade</span>${tag(r.nt)}</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.45">${r.ntWhy.map(esc).join("<br>")}</div>
+        ${r.ntFix.filter(Boolean).length ? `<div style="font-size:12px;color:var(--lime);margin-top:8px;line-height:1.45">${r.ntFix.filter(Boolean).map(x => "→ " + esc(x)).join("<br>")}</div>` : ""}</div>
+      <button class="lnk" data-gocur="${esc(r.k)}">Open ${esc(r.k)} details →</button></div>`;
+  });
+  h += `<div class="foot">Suggestions are rule-based from your own trade and skip records.<br>Small samples can mislead: judge after 10+ trades.</div>`;
+  $("kBody").innerHTML = h;
+  document.querySelectorAll("[data-gocur]").forEach(b => b.onclick = () => { S.cSym = b.dataset.gocur; S.cType = S.kType; S.cPer = S.kPer; setTab("cur"); });
 }
 
 /* ---------- CONTROL ---------- */
