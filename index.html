@@ -3,160 +3,216 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0d1117">
+<meta name="theme-color" content="#0a0b0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>S4 Trading Dashboard</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="S4 Trading">
+<title>S4 Trading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0d1117;--card:#161b22;--line:#2a313c;--txt:#e6edf3;--mut:#8b949e;--up:#26a269;--dn:#e5534b;--acc:#d4a72c;--blue:#4c8dff}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt);font-size:15px}
-  header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
-  header h1{font-size:17px;margin:0;letter-spacing:.3px;white-space:nowrap}
-  #who{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:var(--mut)}
-  .dot.on{background:var(--up)} .dot.off{background:var(--dn)}
-  main{max-width:1100px;margin:0 auto;padding:14px}
-  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-  .k{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
-  .v{font-size:22px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums}
-  .s{color:var(--mut);font-size:12px;margin-top:2px}
-  .up{color:var(--up)} .dn{color:var(--dn)}
-  h2{font-size:14px;color:var(--mut);margin:22px 2px 8px;text-transform:uppercase;letter-spacing:.6px}
-  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  button{border:0;border-radius:10px;padding:12px 16px;font-size:15px;font-weight:600;cursor:pointer;color:#fff}
-  button:disabled{opacity:.5}
-  .b-pause{background:#9a6700} .b-run{background:var(--up)} .b-close{background:var(--dn)} .b-apply{background:var(--blue)} .b-ghost{background:transparent;border:1px solid var(--line);color:var(--txt);padding:8px 12px;font-size:13px}
-  label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut)}
-  input{background:#0d1117;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:10px;font-size:16px;width:100%}
-  .risk{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
-  th{color:var(--mut);font-weight:500}
-  .tbl{overflow-x:auto}
-  .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:#21262d}
-  .pill.AUTO{background:#1a3d2a;color:#56d364} .pill.PAUSED{background:#3d2e00;color:#e3b341}
-  .pill.stop{background:#3d1416;color:#ff7b72} .pill.stale{background:#21262d;color:var(--mut)}
-  .note{color:var(--mut);font-size:12px;margin-top:8px}
-  .ack{font-size:12px;color:var(--acc);margin-top:8px;min-height:16px}
-  svg{width:100%;height:180px;display:block}
-  .center{max-width:380px;margin:40px auto}
-  .center .card{display:flex;flex-direction:column;gap:12px}
-  .err{color:var(--dn);font-size:13px;min-height:16px}
-  .hide{display:none!important}
-  select{background:#161b22;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font-size:14px;max-width:100%;min-width:120px}
-  .banner{background:#3d2e00;color:#e3b341;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px}
+:root{--bg:#0a0b0a;--card:#121412;--raise:#181b17;--line:#1e211d;--txt:#f2f4ef;--mut:#8a9086;--dim:#5f655c;--lime:#c5f36b;--lime2:#8fb84a;--lime3:#4f6a22;--lime4:#2c3a17;--red:#ff7a6b;--redbg:#2e1513;--upbg:#1f2a12;--amber:#f0c75e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,-apple-system,system-ui,sans-serif;font-size:14px}
+.n{font-variant-numeric:tabular-nums}
+.hide{display:none!important}
+.wrap{max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 100px)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.top h1{font-size:20px;margin:0;font-weight:700}
+.sub{font-size:12px;color:var(--mut)}
+.live{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:20px;padding:6px 10px;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--dim)}.dot.on{background:var(--lime)}.dot.off{background:var(--red)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.lbl{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:1.2px;font-weight:500}
+.big{font-size:26px;font-weight:600;margin-top:10px}
+.up{background:var(--upbg);color:var(--lime);font-size:11px;font-weight:600;padding:3px 7px;border-radius:7px;white-space:nowrap}
+.dn{background:var(--redbg);color:var(--red);font-size:11px;font-weight:600;padding:3px 7px;border-radius:7px;white-space:nowrap}
+.nt{background:var(--raise);color:var(--mut);font-size:11px;font-weight:600;padding:3px 7px;border-radius:7px;white-space:nowrap}
+.wn{background:#2e2410;color:var(--amber);font-size:11px;font-weight:600;padding:3px 8px;border-radius:7px;white-space:nowrap}
+.go{width:26px;height:26px;border-radius:50%;background:var(--lime);color:var(--bg);display:flex;align-items:center;justify-content:center;flex:none}
+.go.r{background:var(--redbg);color:var(--red)}
+.tile{background:var(--raise);border-radius:12px;padding:10px}
+.tile .k{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.tile .v{font-weight:600;margin-top:3px}
+.sq{width:7px;height:7px;border-radius:2px;background:var(--lime);display:inline-block}
+.fl{display:flex;flex-direction:column;gap:5px;font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:1px}
+select,input{height:44px;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--txt);font:600 14px Inter,sans-serif;padding:0 11px;width:100%;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,#8a9086 50%),linear-gradient(135deg,#8a9086 50%,transparent 50%);background-position:calc(100% - 16px) 19px,calc(100% - 11px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:26px}
+input{background:var(--bg);font-variant-numeric:tabular-nums;text-transform:none;letter-spacing:0}
+button{font-family:Inter,sans-serif;cursor:pointer}
+.pri{height:48px;border:0;border-radius:12px;background:var(--lime);color:var(--bg);font-weight:700;font-size:14px;width:100%}
+.btn{height:44px;border-radius:11px;font-weight:600;font-size:13px;border:1px solid var(--line);background:var(--raise);color:var(--txt);width:100%}
+.btn.red{color:var(--red)}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:3px;gap:3px}
+.seg button{flex:1;height:36px;border:0;border-radius:8px;background:transparent;color:var(--mut);font-size:13px;font-weight:500}
+.seg button.on{background:var(--lime);color:var(--bg);font-weight:700}
+.bars{height:140px;display:flex;align-items:flex-end;gap:4px;margin-top:14px}
+.bar{flex:1;min-width:3px;border-radius:6px;background:repeating-linear-gradient(135deg,#1c1f1b 0 4px,#252923 4px 8px);position:relative}
+.bar .cap{position:absolute;top:4px;left:22%;right:22%;height:3px;border-radius:2px;background:var(--lime)}
+.bar.neg .cap{background:var(--red)}
+.bar.hl{background:var(--lime)}.bar.hl .cap{display:none}.bar.hl.neg{background:var(--red)}
+.xl{display:flex;gap:4px;font-size:10px;color:var(--mut);margin-top:6px;text-align:center}.xl span{flex:1;min-width:3px;overflow:visible;white-space:nowrap}
+.insight{background:var(--lime);border-radius:16px;padding:16px;color:var(--bg)}
+.insight .tag{display:inline-flex;background:var(--bg);color:var(--lime);font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px}
+.insight .t{font-size:17px;font-weight:600;line-height:1.38;margin-top:10px}
+.insight .pill{border:1.5px solid var(--bg);border-radius:14px;padding:0 7px}
+.row{background:var(--raise);border-radius:12px;padding:12px}
+.rowh{display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;width:100%;background:none;border:0;color:var(--txt);padding:0;font-size:14px;font-weight:600;text-align:left}
+.lnk{color:var(--lime);font-weight:600;font-size:13px;background:none;border:0;padding:8px 0 0}
+.hm{display:grid;grid-template-columns:30px repeat(12,minmax(0,1fr));gap:3px;font-size:10px;color:var(--mut);align-items:center;margin-top:12px}
+.hm i{height:14px;border-radius:3px;display:block}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;font-size:10px;text-align:center}
+.cal button{height:40px;border-radius:8px;border:0;background:var(--raise);color:var(--dim);font-size:10px;padding:3px 0;font-family:Inter,sans-serif}
+.tr{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.tr:last-child{border-bottom:0}
+.tr .a{font-size:13px;font-weight:600}.tr .b{font-size:11px;color:var(--mut);margin-top:2px}
+.ack{font-size:12px;color:var(--lime);min-height:16px}
+.foot{font-size:11px;color:var(--dim);text-align:center;line-height:1.5}
+.nav{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 10px);max-width:496px;margin:0 auto;height:64px;background:var(--card);border:1px solid var(--line);border-radius:20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:6px;gap:6px;z-index:10}
+.nav button{border:0;background:transparent;color:var(--mut);border-radius:14px;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.nav button.on{background:var(--lime);color:var(--bg);font-weight:700}
+.banner{background:#2e2410;color:var(--amber);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:10px}
+.center{max-width:380px;margin:60px auto;padding:0 16px}
+.err{color:var(--red);font-size:13px;min-height:16px}
+.empty{color:var(--mut);font-size:13px;padding:6px 0}
 </style>
 </head>
 <body>
-<header>
-  <h1><span id="liveDot" class="dot"></span>S4 Trading</h1>
-  <div class="row"><select id="accSel" class="hide" aria-label="Trading account"></select><span id="who" class="s"></span><button id="logoutBtn" class="b-ghost hide">Log out</button></div>
-</header>
 
-<!-- First run: Firebase project settings (saved on this device only) -->
 <section id="cfgView" class="center hide">
-  <div class="card">
-    <div class="k">Connect to your Firebase project</div>
-    <label>Web API key<input id="cfgKey" autocomplete="off"></label>
-    <label>Project ID<input id="cfgProj" autocomplete="off" placeholder="my-s4-dashboard"></label>
-    <label>Realtime Database URL<input id="cfgUrl" autocomplete="off" placeholder="https://....firebasedatabase.app"></label>
-    <button id="cfgSave" class="b-apply">Save</button>
-    <div class="note">Saved on this device only. Found in Firebase console → Project settings → Your apps → Web app.</div>
+  <div class="card stack">
+    <div style="display:flex;align-items:center;gap:10px"><div class="go" style="width:34px;height:34px;border-radius:10px;font-weight:700">S4</div><b>Connect to Firebase</b></div>
+    <label class="fl">Web API key<input id="cfgKey" autocomplete="off"></label>
+    <label class="fl">Project ID<input id="cfgProj" autocomplete="off"></label>
+    <label class="fl">Realtime Database URL<input id="cfgUrl" autocomplete="off" placeholder="https://....firebasedatabase.app"></label>
+    <button id="cfgSave" class="pri">Save</button>
+    <div class="sub">Saved on this device only.</div>
   </div>
 </section>
 
-<!-- Login -->
 <section id="loginView" class="center hide">
-  <div class="card">
-    <div class="k">Sign in</div>
-    <label>Email<input id="email" type="email" autocomplete="username"></label>
-    <label>Password<input id="pass" type="password" autocomplete="current-password"></label>
-    <button id="loginBtn" class="b-apply">Sign in</button>
+  <div class="card stack">
+    <div style="display:flex;align-items:center;gap:10px"><div class="go" style="width:34px;height:34px;border-radius:10px;font-weight:700">S4</div><b>Sign in</b></div>
+    <label class="fl">Email<input id="email" type="email" autocomplete="username"></label>
+    <label class="fl">Password<input id="pass" type="password" autocomplete="current-password"></label>
+    <button id="loginBtn" class="pri">Sign in</button>
     <div id="loginErr" class="err"></div>
-    <button id="cfgReset" class="b-ghost">Change Firebase project</button>
+    <button id="cfgReset" class="btn">Change Firebase project</button>
   </div>
 </section>
 
-<!-- Dashboard -->
-<main id="appView" class="hide">
-  <div id="staleBanner" class="banner hide">The EA has not reported for a while. Check that MT5 is running and the bots are on the charts.</div>
-
-  <div class="grid">
-    <div class="card"><div class="k">Balance</div><div class="v" id="bal">-</div><div class="s" id="acct">-</div></div>
-    <div class="card"><div class="k">Equity</div><div class="v" id="eq">-</div><div class="s" id="ml">-</div></div>
-    <div class="card"><div class="k">Floating P/L</div><div class="v" id="pl">-</div><div class="s" id="openN">-</div></div>
-    <div class="card"><div class="k">Today loss</div><div class="v" id="dl">-</div><div class="s" id="dlLim">-</div></div>
-    <div class="card"><div class="k">Week loss</div><div class="v" id="wl">-</div><div class="s" id="wlLim">-</div></div>
-    <div class="card"><div class="k">Trading</div><div class="v" id="state">-</div><div class="s" id="upd">-</div></div>
+<main id="appView" class="wrap hide">
+  <div class="top">
+    <div><h1 id="pgTitle">Overview</h1><div class="sub" id="pgSub">S4 bot performance &amp; progress</div></div>
+    <span class="live"><span id="liveDot" class="dot"></span><span id="liveTxt">-</span></span>
   </div>
+  <div id="banner" class="banner hide"></div>
+  <label class="fl" style="margin-bottom:12px">MT5 account<select id="accSel"></select></label>
 
-  <h2>Controls</h2>
-  <div class="card">
-    <div class="row">
-      <button id="pauseBtn" class="b-pause">⏸ Pause all</button>
-      <button id="resumeBtn" class="b-run">▶ Resume</button>
-      <button id="closeBtn" class="b-close">✕ Close all trades</button>
+  <!-- SUMMARY -->
+  <section id="pSum" class="stack">
+    <div class="g2">
+      <label class="fl">View<select id="sType"><option value="D">Daily</option><option value="W">Weekly</option><option value="M">Monthly</option></select></label>
+      <label class="fl">Period<select id="sPer"></select></label>
     </div>
-    <div class="risk">
-      <label>Risk per trade %<input id="rRisk" type="number" step="0.1" min="0.1" max="10" inputmode="decimal"></label>
-      <label>Daily stop %<input id="rDaily" type="number" step="0.5" min="1" max="50" inputmode="decimal"></label>
-      <label>Weekly stop %<input id="rWeekly" type="number" step="0.5" min="1" max="50" inputmode="decimal"></label>
+    <div id="sBody" class="stack"></div>
+  </section>
+
+  <!-- CURRENCIES -->
+  <section id="pCur" class="stack hide">
+    <div style="display:grid;grid-template-columns:1.1fr 1fr 1.2fr;gap:8px">
+      <label class="fl">Currency<select id="cSym"></select></label>
+      <label class="fl">View<select id="cType"><option value="D">Daily</option><option value="W">Weekly</option><option value="M">Monthly</option></select></label>
+      <label class="fl">Period<select id="cPer"></select></label>
     </div>
-    <button id="applyBtn" class="b-apply">Apply risk settings</button>
-    <div class="note">Limits: risk 0.1–10%, daily and weekly stop 1–50%. Applies to all symbols on the next trade. Open trades keep their SL/TP.</div>
-    <div class="ack" id="ack"></div>
-  </div>
+    <div id="cBody" class="stack"></div>
+  </section>
 
-  <h2>Equity</h2>
-  <div class="card"><svg id="chart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg><div class="s" id="chartNote"></div></div>
-
-  <h2>Symbols</h2>
-  <div class="card tbl">
-    <table><thead><tr><th>Symbol</th><th>Status</th><th>Position</th><th>Condition</th><th>Stats</th></tr></thead>
-    <tbody id="symBody"><tr><td colspan="5" class="s">Waiting for the EA…</td></tr></tbody></table>
-  </div>
-
-  <h2>Recent trades</h2>
-  <div class="card tbl">
-    <table><thead><tr><th>Time (MYT)</th><th>Symbol</th><th>Side</th><th>Result</th><th>Reason</th></tr></thead>
-    <tbody id="trBody"><tr><td colspan="5" class="s">No closed trades yet.</td></tr></tbody></table>
-    <div class="s" id="trSum"></div>
-  </div>
-
-  <h2>Account progress</h2>
-  <div class="grid">
-    <div class="card"><div class="k">All trades</div><div class="v" id="pgN">-</div><div class="s" id="pgWin">-</div></div>
-    <div class="card"><div class="k">Net result</div><div class="v" id="pgNet">-</div><div class="s" id="pgPF">-</div></div>
-    <div class="card"><div class="k">Since first record</div><div class="v" id="pgGrow">-</div><div class="s" id="pgFrom">-</div></div>
-    <div class="card"><div class="k">Best / worst trade</div><div class="v" id="pgBest">-</div><div class="s" id="pgWorst">-</div></div>
-  </div>
+  <!-- CONTROL -->
+  <section id="pCtl" class="stack hide"></section>
 </main>
+
+<nav id="nav" class="nav hide">
+  <button data-tab="sum" class="on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Summary</button>
+  <button data-tab="cur"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>Currencies</button>
+  <button data-tab="ctl"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Control</button>
+</nav>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, update, query, limitToLast, limitToFirst } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, onValue, update, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// Optional: fill these in to skip the first-run form on every device.
-const FIXED_CONFIG = { apiKey: "", projectId: "", databaseURL: "" };
+const FIXED_CONFIG = { apiKey: "", projectId: "", databaseURL: "" };   // optional: fill to skip the first-run form
 
+/* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
 const show = (id, on) => $(id).classList.toggle("hide", !on);
-const money = v => (v == null || isNaN(v)) ? "-" : (v < 0 ? "-" : "") + "$" + Math.abs(v).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-const pct = v => (v == null || isNaN(v)) ? "-" : Number(v).toFixed(1) + "%";
-const sign = (el, v) => { el.classList.toggle("up", v > 0); el.classList.toggle("dn", v < 0); };
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 const nowS = () => Date.now() / 1000;
-const myt = t => new Date(t * 1000).toLocaleString("en-GB", {timeZone:"Asia/Kuala_Lumpur", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit"});
+const H8 = 8 * 3600, DAY = 86400;
+const money = v => (v == null || isNaN(v)) ? "-" : (v < 0 ? "−$" : (v > 0 ? "+$" : "$")) + Math.abs(v).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+const cash = v => (v == null || isNaN(v)) ? "-" : "$" + Number(v).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+const badge = (v, txt) => `<span class="${v > 0 ? "up" : v < 0 ? "dn" : "nt"}">${v > 0 ? "▲ " : v < 0 ? "▼ " : ""}${txt}</span>`;
+const pct = v => (v == null || !isFinite(v)) ? "-" : (Math.abs(v) < 10 ? v.toFixed(1) : Math.round(v)) + "%";
+const mytParts = t => { const d = new Date((t + H8) * 1000); return { y: d.getUTCFullYear(), m: d.getUTCMonth(), d: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes(), wd: (d.getUTCDay() + 6) % 7 }; };
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const WD = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const fmtT = t => { const p = mytParts(t); return `${p.d} ${MON[p.m]} ${String(p.h).padStart(2,"0")}:${String(p.mi).padStart(2,"0")}`; };
+const fmtHM = t => { const p = mytParts(t); return `${String(p.h).padStart(2,"0")}:${String(p.mi).padStart(2,"0")}`; };
+const dayStart = t => Math.floor((t + H8) / DAY) * DAY - H8;
+const weekStart = t => { const d = Math.floor((t + H8) / DAY); return (d - (d + 3) % 7) * DAY - H8; };
+const monthStart = (y, m) => Date.UTC(y, m, 1) / 1000 - H8;
 const ago = t => { const s = Math.max(0, Math.round(nowS() - t)); return s < 60 ? s + "s ago" : s < 3600 ? Math.round(s/60) + "m ago" : Math.round(s/3600) + "h ago"; };
+const ICON_UP = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>';
+const ICON_DN = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M7 7l10 10M17 9v8H9"/></svg>';
+const SKIP_TXT = { quiet: "Market too quiet (ATR)", spread: "Spread too wide", news: "News blackout", lot: "Min lot would exceed risk", margin: "Not enough margin", maxopen: "Max open trades reached", limit: "Daily/weekly loss stop" };
+const SHADES = ["#c5f36b", "#8fb84a", "#5f7f2c", "#3e5320", "#2a2e28", "#a6d65a"];
 
+/* periods: type D/W/M -> list of {v, label, s, e} (Malaysia time) */
+function periods(type, trades) {
+  const now = nowS(), out = [];
+  const first = trades.length ? Math.min(...trades.map(t => t.t)) : now;
+  if (type === "D") {
+    const n = Math.max(14, Math.min(120, Math.ceil((now - first) / DAY) + 1));
+    for (let i = 0; i < n; i++) { const s = dayStart(now) - i * DAY; const p = mytParts(s + 1); out.push({ v: String(s), s, e: s + DAY, label: (i === 0 ? "Today · " : i === 1 ? "Yesterday · " : "") + `${WD[p.wd]}, ${p.d} ${MON[p.m]} ${p.y}` }); }
+  } else if (type === "W") {
+    const n = Math.max(8, Math.min(52, Math.ceil((now - first) / (7 * DAY)) + 1));
+    for (let i = 0; i < n; i++) { const s = weekStart(now) - i * 7 * DAY; const a = mytParts(s + 1), b = mytParts(s + 6 * DAY + 1); out.push({ v: String(s), s, e: s + 7 * DAY, label: (i === 0 ? "This week · " : "") + `${a.d} ${MON[a.m]} – ${b.d} ${MON[b.m]}` }); }
+  } else {
+    const p = mytParts(now), f = mytParts(first);
+    let y = p.y, m = p.m, k = 0;
+    while (k < 24) { const s = monthStart(y, m); out.push({ v: String(s), s, e: monthStart(m === 11 ? y + 1 : y, (m + 1) % 12), label: `${MON[m]} ${y}` }); if ((y < f.y || (y === f.y && m <= f.m)) && k >= 2) break; m--; if (m < 0) { m = 11; y--; } k++; }
+  }
+  return out;
+}
+function fillPeriods(selId, type, trades, keep) {
+  const list = periods(type, trades), sel = $(selId);
+  sel.innerHTML = list.map(p => `<option value="${p.v}">${esc(p.label)}</option>`).join("");
+  sel.value = (keep && list.some(p => p.v === keep)) ? keep : list[0].v;
+  return list;
+}
+function stats(list) {
+  const w = list.filter(t => t.profit > 0), l = list.filter(t => t.profit <= 0);
+  const gp = w.reduce((s, t) => s + t.profit, 0), gl = -l.reduce((s, t) => s + t.profit, 0);
+  return { n: list.length, w: w.length, net: gp - gl, gp, gl, pf: gl > 0 ? gp / gl : (gp > 0 ? Infinity : 0),
+           wr: list.length ? 100 * w.length / list.length : 0, aw: w.length ? gp / w.length : 0, al: l.length ? -gl / l.length : 0,
+           best: list.length ? Math.max(...list.map(t => t.profit)) : 0, worst: list.length ? Math.min(...list.map(t => t.profit)) : 0,
+           hold: list.length ? list.reduce((s, t) => s + Math.max(0, t.t - (t.o || t.t)), 0) / list.length : 0 };
+}
+const pfTxt = pf => pf === Infinity ? "∞" : pf.toFixed(2);
+const holdTxt = s => s < 3600 ? Math.round(s / 60) + "m" : (s / 3600).toFixed(1) + "h";
+
+/* ---------- boot ---------- */
 function loadCfg() {
   if (FIXED_CONFIG.apiKey && FIXED_CONFIG.databaseURL) return FIXED_CONFIG;
   try { return JSON.parse(localStorage.getItem("s4cfg") || "null"); } catch { return null; }
 }
-
-let cfg = loadCfg();
+function boot() {
+const cfg = loadCfg();
 if (!cfg) {
   show("cfgView", true);
   $("cfgSave").onclick = () => {
@@ -165,16 +221,18 @@ if (!cfg) {
     try { localStorage.setItem("s4cfg", JSON.stringify(c)); } catch {}
     location.reload();
   };
-} else {
-  start(cfg);
+} else start(cfg);
 }
+
+/* ---------- app state ---------- */
+const S = { acc: null, base: null, index: {}, account: null, symbols: {}, trades: [], equity: [], skips: {}, control: {}, ack: null,
+            tab: "sum", sType: "D", sPer: null, cSym: "ALL", cType: "M", cPer: null, open: {}, ctlOpen: null, ctlDirty: true };
+let db, subs = [];
 
 function start(c) {
   const app = initializeApp({ apiKey: c.apiKey, authDomain: c.projectId + ".firebaseapp.com", projectId: c.projectId, databaseURL: c.databaseURL });
-  const auth = getAuth(app);
-  const db = getDatabase(app);
+  const auth = getAuth(app); db = getDatabase(app);
   setPersistence(auth, browserLocalPersistence).catch(() => {});
-
   $("cfgReset").onclick = () => { try { localStorage.removeItem("s4cfg"); } catch {} location.reload(); };
   $("loginBtn").onclick = async () => {
     $("loginErr").textContent = "";
@@ -182,174 +240,421 @@ function start(c) {
     catch (e) { $("loginErr").textContent = "Sign-in failed: " + (e.code || e.message); }
   };
   $("pass").addEventListener("keydown", e => { if (e.key === "Enter") $("loginBtn").click(); });
-  $("logoutBtn").onclick = () => signOut(auth);
-
-  let unsub = [], unIdx = null, curAcc = null;
-  const pick = acc => {
-    if (acc === curAcc) return;
-    curAcc = acc; try { localStorage.setItem("s4acc", acc); } catch {}
-    unsub.forEach(f => f()); unsub = [];
-    resetView();
-    unsub = wire(db, "s4/acc/" + acc);
-  };
-  $("accSel").onchange = e => pick(e.target.value);
+  let unIdx = null;
   onAuthStateChanged(auth, user => {
-    unsub.forEach(f => f()); unsub = []; if (unIdx) { unIdx(); unIdx = null; } curAcc = null;
-    show("loginView", !user); show("appView", !!user); show("logoutBtn", !!user); show("accSel", !!user);
-    $("who").textContent = user ? user.email : "";
+    show("loginView", !user); show("appView", !!user); show("nav", !!user);
+    if (unIdx) { unIdx(); unIdx = null; }
+    unwire();
     if (!user) return;
     unIdx = onValue(ref(db, "s4/index"), snap => {
-      const idx = snap.val() || {};
-      const list = Object.values(idx).filter(a => a && a.login).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+      S.index = snap.val() || {};
+      const list = Object.values(S.index).filter(a => a && a.login).sort((a, b) => (b.ts || 0) - (a.ts || 0));
       if (!list.length) { $("accSel").innerHTML = "<option>Waiting for the EA…</option>"; return; }
-      const saved = (() => { try { return localStorage.getItem("s4acc"); } catch { return null; } })();
-      const want = curAcc || (idx[saved] ? saved : list[0].login);
+      let saved = null; try { saved = localStorage.getItem("s4acc"); } catch {}
+      const want = S.acc || (S.index[saved] ? saved : list[0].login);
       $("accSel").innerHTML = list.map(a => `<option value="${esc(a.login)}">${esc(a.type)} · ${esc(a.login)} · ${esc(a.server)}</option>`).join("");
       $("accSel").value = want;
-      pick(want);
-    }, err => {
-      $("accSel").innerHTML = "<option>No access</option>";
-      $("staleBanner").textContent = "Cannot read the data (" + (err.code || err.message) + "). Check that the UID in Realtime Database → Rules matches your user's UID in Authentication → Users, then Publish.";
-      show("staleBanner", true);
-    });
+      if (want !== S.acc) pickAcc(want);
+    }, err => banner("Cannot read the data (" + (err.code || err.message) + "). Check that the UID in Realtime Database → Rules matches your user's UID, then Publish."));
   });
+  $("accSel").onchange = e => pickAcc(e.target.value);
+  document.querySelectorAll(".nav button").forEach(b => b.onclick = () => setTab(b.dataset.tab));
+  $("sType").onchange = e => { S.sType = e.target.value; S.sPer = null; renderSum(); };
+  $("sPer").onchange = e => { S.sPer = e.target.value; renderSum(); };
+  $("cSym").onchange = e => { S.cSym = e.target.value; renderCur(); };
+  $("cType").onchange = e => { S.cType = e.target.value; S.cPer = null; renderCur(); };
+  $("cPer").onchange = e => { S.cPer = e.target.value; renderCur(); };
+  setInterval(() => { renderLive(); }, 5000);
 }
-
-function resetView() {
-  ["bal","acct","eq","ml","pl","openN","dl","dlLim","wl","wlLim","state","upd","pgN","pgWin","pgNet","pgPF","pgGrow","pgFrom","pgBest","pgWorst","chartNote","trSum"].forEach(id => $(id).textContent = "-");
-  $("ack").textContent = ""; $("chart").innerHTML = "";
-  $("symBody").innerHTML = '<tr><td colspan="5" class="s">Waiting for the EA…</td></tr>';
-  $("trBody").innerHTML = '<tr><td colspan="5" class="s">No closed trades yet.</td></tr>';
+function banner(msg) { $("banner").textContent = msg || ""; show("banner", !!msg); }
+function unwire() { subs.forEach(f => f()); subs = []; }
+function pickAcc(acc) {
+  S.acc = acc; S.base = "s4/acc/" + acc; try { localStorage.setItem("s4acc", acc); } catch {}
+  Object.assign(S, { account: null, symbols: {}, trades: [], equity: [], skips: {}, control: {}, ack: null, open: {}, ctlDirty: true });
+  unwire();
+  const on = (path, cb) => subs.push(onValue(ref(db, S.base + path), s => cb(s.val()), err => banner("Read error: " + err.message)));
+  const onq = (path, n, cb) => subs.push(onValue(query(ref(db, S.base + path), limitToLast(n)), s => cb(s.val()), err => banner("Read error: " + err.message)));
+  on("/account", v => { S.account = v; renderLive(); if (S.tab === "sum") renderSum(); });
+  on("/symbols", v => { const first = !Object.keys(S.symbols).length; S.symbols = v || {}; if (first) S.ctlDirty = true; renderAll(); });
+  onq("/trades", 5000, v => { S.trades = Object.values(v || {}).filter(t => t && t.t).sort((a, b) => a.t - b.t); renderAll(); });
+  onq("/equity", 3000, v => { S.equity = Object.values(v || {}).filter(p => p && p.t).sort((a, b) => a.t - b.t); if (S.tab === "sum") renderSum(); });
+  on("/skips", v => { S.skips = v || {}; if (S.tab === "cur") renderCur(); });
+  on("/control", v => { const first = !S.control || !Object.keys(S.control).length; S.control = v || {}; if (first) S.ctlDirty = true; if (S.tab === "ctl") renderCtl(); });
+  on("/controlAck", v => { S.ack = v; const el = $("ackLine"); if (el && v) el.textContent = "✓ EA applied: " + v.applied + " · " + ago(v.ts); });
+  renderAll();
 }
-
-function wire(db, base) {
-  const st = { account: null, symbols: {}, control: {}, editing: false, trades: [], first: null };
-  const subs = [];
-  const on = (path, cb) => subs.push(onValue(path, s => cb(s.val()), err => { $("ack").textContent = "Read error: " + err.message + " (check the database rules)"; }));
-
-  on(ref(db, base + "/account"), v => { st.account = v; renderAccount(st); renderProgress(st); });
-  on(ref(db, base + "/symbols"), v => { st.symbols = v || {}; renderSymbols(st); renderAccount(st); });
-  on(ref(db, base + "/control"), v => { st.control = v || {}; fillRisk(st); });
-  on(ref(db, base + "/controlAck"), v => { if (v) $("ack").textContent = "EA applied: " + v.applied + " (" + ago(v.ts) + ")"; });
-  on(query(ref(db, base + "/trades"), limitToLast(2000)), v => { st.trades = Object.values(v || {}); renderTrades(v); renderProgress(st); });
-  on(query(ref(db, base + "/equity"), limitToLast(288)), v => renderChart(v));
-  on(query(ref(db, base + "/equity"), limitToFirst(1)), v => { st.first = Object.values(v || {})[0] || null; renderProgress(st); });
-
-  const ctl = (obj, msg) => update(ref(db, base + "/control"), obj)
-      .then(() => { $("ack").textContent = msg + " Sent. Waiting for the EA…"; })
-      .catch(e => { $("ack").textContent = "Not sent: " + e.message; });
-
-  $("pauseBtn").onclick  = () => ctl({ pause: true },  "Pause all:");
-  $("resumeBtn").onclick = () => ctl({ pause: false }, "Resume:");
-  $("closeBtn").onclick  = () => {
-    const n = Object.values(st.symbols).filter(s => s && s.pos).length;
-    if (confirm("Close ALL open S4 trades now" + (n ? " (" + n + " open)" : "") + "? This cannot be undone.")) ctl({ closeAll: nowS() }, "Close all:");
-  };
-  $("applyBtn").onclick = () => {
-    const r = parseFloat($("rRisk").value), d = parseFloat($("rDaily").value), w = parseFloat($("rWeekly").value);
-    if (!(r >= 0.1 && r <= 10) || !(d >= 1 && d <= 50) || !(w >= 1 && w <= 50)) { alert("Risk must be 0.1–10%, daily and weekly stop 1–50%."); return; }
-    if (confirm(`Apply to all symbols?\nRisk per trade: ${r}%\nDaily stop: ${d}%\nWeekly stop: ${w}%`)) { st.editing = false; ctl({ riskPct: r, dailyPct: d, weeklyPct: w }, "Risk settings:"); }
-  };
-  ["rRisk","rDaily","rWeekly"].forEach(id => $(id).addEventListener("input", () => st.editing = true));
-
-  const tick = setInterval(() => { renderAccount(st); renderSymbols(st); }, 5000);
-  return [...subs, () => clearInterval(tick)];
+function setTab(t) {
+  S.tab = t;
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  show("pSum", t === "sum"); show("pCur", t === "cur"); show("pCtl", t === "ctl");
+  const T = { sum: ["Overview", "S4 bot performance & progress"], cur: ["Currencies", "Performance by symbol"], ctl: ["Control", "Risk, stop & trade settings"] }[t];
+  $("pgTitle").textContent = T[0]; $("pgSub").textContent = T[1];
+  if (t === "ctl") S.ctlDirty = true;
+  renderAll(); window.scrollTo(0, 0);
 }
-
-function fillRisk(st) {
-  if (st.editing) return;
-  const a = st.account || {}, c = st.control || {};
-  $("rRisk").value   = c.riskPct   ?? a.riskPct   ?? "";
-  $("rDaily").value  = c.dailyPct  ?? a.dailyPct  ?? "";
-  $("rWeekly").value = c.weeklyPct ?? a.weeklyPct ?? "";
-}
-
-function renderAccount(st) {
-  const a = st.account;
-  if (!a) return;
+function renderAll() { renderLive(); if (S.tab === "sum") renderSum(); else if (S.tab === "cur") renderCur(); else renderCtl(); }
+function renderLive() {
+  const a = S.account;
+  if (!a) { $("liveDot").className = "dot"; $("liveTxt").textContent = "Waiting"; return; }
   const live = nowS() - (a.ts || 0) < 60;
   $("liveDot").className = "dot " + (live ? "on" : "off");
-  if (!live) $("staleBanner").textContent = "The EA has not reported for a while. Check that MT5 is running and the bots are on the charts.";
-  show("staleBanner", !live);
-  $("bal").textContent = money(a.balance);
-  $("acct").textContent = (a.accType || "") + " · " + (a.server || "");
-  $("eq").textContent = money(a.equity);
-  $("ml").textContent = a.marginLevel > 0 ? "Margin level " + Math.round(a.marginLevel) + "%" : "No margin used";
-  $("pl").textContent = money(a.profit); sign($("pl"), a.profit);
-  $("openN").textContent = Object.values(st.symbols).filter(s => s && s.pos).length + " open trade(s)";
-  $("dl").textContent = pct(a.dayLossPct); $("dl").classList.toggle("dn", a.dayLossPct >= a.dailyPct * 0.75);
-  $("dlLim").textContent = "Stop at " + pct(a.dailyPct);
-  $("wl").textContent = pct(a.weekLossPct); $("wl").classList.toggle("dn", a.weekLossPct >= a.weeklyPct * 0.75);
-  $("wlLim").textContent = "Stop at " + pct(a.weeklyPct);
-  $("state").textContent = a.paused ? "PAUSED" : "AUTO";
-  $("state").className = "v " + (a.paused ? "dn" : "up");
-  $("upd").textContent = "Risk " + pct(a.riskPct) + "/trade · updated " + ago(a.ts);
-  if (!st.editing && !st.control.riskPct) fillRisk(st);
+  $("liveTxt").textContent = live ? "Live" : "Offline " + ago(a.ts);
+  if (!live) banner("The EA has not reported for " + ago(a.ts).replace(" ago", "") + ". Check that MT5 is running and the bots are on the charts.");
+  else if ($("banner").textContent.startsWith("The EA has not")) banner("");
 }
+const symKeys = () => { const k = new Set(Object.keys(S.symbols)); S.trades.forEach(t => k.add(t.key || t.sym)); return [...k].sort(); };
+const tKey = t => t.key || t.sym;
+const openCount = k => { const s = S.symbols[k]; if (!s) return 0; return Array.isArray(s.positions) ? s.positions.length : (s.pos ? 1 : 0); };
+const startBalance = s => { const a = S.account; if (!a) return null; return a.balance - S.trades.filter(t => t.t >= s).reduce((x, t) => x + t.profit, 0); };
 
-function renderSymbols(st) {
-  const rows = Object.entries(st.symbols).sort(([a],[b]) => a.localeCompare(b));
-  if (!rows.length) return;
-  $("symBody").innerHTML = rows.map(([sym, s]) => {
-    const stale = nowS() - (s.ts || 0) > 90;
-    const status = stale ? "OFFLINE" : (s.status || "-");
-    const cls = stale ? "stale" : (status === "AUTO" ? "AUTO" : status === "PAUSED" ? "PAUSED" : "stop");
-    const p = s.pos;
-    const pos = p ? `<b class="${p.dir === "BUY" ? "up" : "dn"}">${esc(p.dir)}</b> ${esc(p.lots)} @ ${esc(p.entry)}<br><span class="s">SL ${esc(p.sl)} · TP ${esc(p.tp)}</span><br><b class="${p.pl >= 0 ? "up" : "dn"}">${money(p.pl)}</b>` : `<span class="s">none</span>`;
-    const wr = s.trades ? Math.round(100 * s.wins / s.trades) + "%" : "-";
-    return `<tr><td><b>${esc(sym)}</b><br><span class="s">${esc(s.strategy)}</span></td>
-      <td><span class="pill ${cls}">${esc(status)}</span><br><span class="s">${ago(s.ts)}</span></td>
-      <td>${pos}</td>
-      <td>${esc(s.cond)}<br><span class="s">Last signal: ${esc(s.lastSig)}<br>Last skip: ${esc(s.lastSkip)}</span></td>
-      <td>${s.trades || 0} trades<br>win ${wr}<br><b class="${s.net >= 0 ? "up" : "dn"}">${money(s.net)}</b></td></tr>`;
+/* ---------- SUMMARY ---------- */
+function renderSum() {
+  $("sType").value = S.sType;
+  const list = fillPeriods("sPer", S.sType, S.trades, S.sPer); S.sPer = $("sPer").value;
+  const P = list.find(p => p.v === S.sPer);
+  const tr = S.trades.filter(t => t.t >= P.s && t.t < P.e);
+  const st = stats(tr), a = S.account || {};
+  const b0 = startBalance(P.s), growth = b0 ? st.net / b0 * 100 : 0;
+  // drawdown inside the period (closed-trade balance)
+  let bal = b0 || 0, peak = bal, dd = 0, ddAmt = 0;
+  tr.forEach(t => { bal += t.profit; if (bal > peak) peak = bal; if (peak > 0 && (peak - bal) / peak * 100 > dd) { dd = (peak - bal) / peak * 100; ddAmt = peak - bal; } });
+  const openNow = symKeys().reduce((s, k) => s + openCount(k), 0);
+  const kpi = (label, val, b, red) => `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">${label}</span><span class="go${red ? " r" : ""}">${red ? ICON_DN : ICON_UP}</span></div><div class="big n">${val}</div><div style="margin-top:8px">${b}</div></div>`;
+  let h = `<div class="g2">
+    ${kpi("Net P/L", money(st.net), badge(growth, pct(Math.abs(growth))), st.net < 0)}
+    ${kpi("Win rate", st.n ? Math.round(st.wr) + "%" : "-", badge(st.n ? (st.wr >= 50 ? 1 : -1) : 0, `${st.w} of ${st.n}`), false)}
+    ${kpi("Profit factor", st.n ? pfTxt(st.pf) : "-", badge(st.pf >= 1 ? 1 : (st.n ? -1 : 0), st.pf >= 1 ? "above 1.00" : "below 1.00"), st.n && st.pf < 1)}
+    ${kpi("Max drawdown", pct(dd), badge(dd > 0 ? -1 : 0, cash(ddAmt)), true)}
+  </div>
+  <div class="card"><div class="lbl" style="margin-bottom:10px">Trade ledger</div><div class="g2" style="gap:8px">
+    <div class="tile"><div class="k"><span class="sq"></span>Trades</div><div class="v n">${st.n} <span class="sub">· ${openNow} open now</span></div></div>
+    <div class="tile"><div class="k"><span class="sq"></span>Avg win / loss</div><div class="v n">${st.n ? money(st.aw) + " / " + money(st.al) : "-"}</div></div>
+    <div class="tile"><div class="k"><span class="sq"></span>Best trade</div><div class="v n">${st.n ? money(st.best) : "-"}</div></div>
+    <div class="tile"><div class="k"><span class="sq" style="background:var(--red)"></span>Worst trade</div><div class="v n">${st.n ? money(st.worst) : "-"}</div></div>
+    <div class="tile"><div class="k"><span class="sq"></span>Balance</div><div class="v n">${cash(a.balance)}</div></div>
+    <div class="tile"><div class="k"><span class="sq"></span>Equity</div><div class="v n">${cash(a.equity)}</div></div>
+  </div></div>`;
+  h += equityCard(P, tr, b0);
+  h += barsCard(P);
+  h += insightCard(tr, st);
+  h += byCurrency(tr);
+  h += `<button class="pri" id="sExport">⤓ Export trades (CSV)</button><div class="foot">S4 bot trades only · Malaysia time · history from 26 Nov 2026</div>`;
+  $("sBody").innerHTML = h;
+  $("sExport").onclick = () => exportCsv(tr, `S4_${S.acc}_${P.label.replace(/[^\w]+/g, "_")}.csv`);
+  document.querySelectorAll("[data-x]").forEach(b => b.onclick = () => { S.open[b.dataset.x] = !S.open[b.dataset.x]; renderSum(); });
+  document.querySelectorAll("[data-goto]").forEach(b => b.onclick = () => { S.cSym = b.dataset.goto; S.cType = S.sType; S.cPer = S.sPer; setTab("cur"); });
+}
+function equityCard(P, tr, b0) {
+  const a = S.account || {};
+  const pts = [];
+  if (b0 != null) { pts.push({ t: P.s, v: b0 }); let b = b0; tr.forEach(t => { b += t.profit; pts.push({ t: t.t, v: b }); }); }
+  const eq = S.equity.filter(p => p.t >= P.s && p.t < P.e).map(p => ({ t: p.t, v: p.eq }));
+  if (a.ts && a.ts >= P.s && a.ts < P.e) eq.push({ t: a.ts, v: a.equity });
+  const all = pts.concat(eq);
+  const endT = Math.min(P.e, Math.max(nowS(), P.s + 1));
+  if (pts.length) pts.push({ t: Math.min(endT, nowS()), v: pts[pts.length - 1].v });
+  let svg = `<div class="empty" style="padding:50px 0;text-align:center">No data for this period yet</div>`;
+  if (all.length >= 2) {
+    const W = 330, Hh = 150, pad = 8;
+    let lo = Math.min(...all.map(p => p.v)), hi = Math.max(...all.map(p => p.v)); if (hi - lo < 1) { hi += .5; lo -= .5; }
+    const x = t => pad + (t - P.s) / (endT - P.s) * (W - 2 * pad), y = v => Hh - pad - (v - lo) / (hi - lo) * (Hh - 2 * pad);
+    const path = arr => arr.map((p, i) => (i ? "L" : "M") + x(p.t).toFixed(1) + " " + y(p.v).toFixed(1)).join(" ");
+    const area = pts.length >= 2 ? `<path d="${path(pts)} L${x(pts[pts.length-1].t).toFixed(1)} ${Hh} L${x(pts[0].t).toFixed(1)} ${Hh} Z" fill="#c5f36b" opacity="0.10"/>` : "";
+    svg = `<svg viewBox="0 0 ${W} ${Hh}" width="100%" height="150" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 ${Hh*.25}H${W}M0 ${Hh*.5}H${W}M0 ${Hh*.75}H${W}" stroke="#1e211d" stroke-width="1"/>${area}
+      ${pts.length >= 2 ? `<path d="${path(pts)}" fill="none" stroke="#c5f36b" stroke-width="2.2" vector-effect="non-scaling-stroke"/>` : ""}
+      ${eq.length >= 2 ? `<path d="${path(eq)}" fill="none" stroke="#f2f4ef" stroke-width="1.4" stroke-dasharray="4 4" vector-effect="non-scaling-stroke" opacity=".8"/>` : ""}
+    </svg><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>Low ${cash(lo)}</span><span>High ${cash(hi)}</span></div>`;
+  }
+  const last = a.balance, chg = (b0 && last != null) ? (last - b0) / b0 * 100 : 0;
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:8px"><span class="n" style="font-size:24px;font-weight:700">${cash(last)}</span>${badge(chg, pct(Math.abs(chg)))}</div><span class="lbl">Equity</span></div>
+    <div style="margin-top:12px">${svg}</div>
+    <div style="display:flex;gap:14px;font-size:11px;color:var(--mut);margin-top:6px"><span><b style="color:var(--lime)">—</b> Balance after each trade</span><span>- - Live equity</span></div></div>`;
+}
+function barsCard(P) {
+  let days = [];
+  if (S.sType === "D") { for (let i = 6; i >= 0; i--) days.push(P.s - i * DAY); }
+  else { for (let s = P.s; s < P.e; s += DAY) days.push(s); }
+  const vals = days.map(s => S.trades.filter(t => t.t >= s && t.t < s + DAY).reduce((x, t) => x + t.profit, 0));
+  const mx = Math.max(1e-9, ...vals.map(Math.abs));
+  const today = dayStart(nowS()), hlDay = S.sType === "D" ? P.s : (days.includes(today) ? today : days[days.length - 1]);
+  const many = days.length > 10;
+  const bars = days.map((s, i) => { const v = vals[i], hl = s === hlDay, ht = Math.max(8, Math.abs(v) / mx * 100);
+    return `<div class="bar${v < 0 ? " neg" : ""}${hl && v !== 0 ? " hl" : ""}" style="height:${v === 0 ? 8 : ht}%" title="${money(v)}">${v !== 0 && !hl ? '<span class="cap"></span>' : ""}${hl && v !== 0 && !many ? `<span style="position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:10px;font-weight:700;color:#0a0b0a">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>` : ""}</div>`; }).join("");
+  const labels = days.map((s, i) => { const p = mytParts(s + 1); const txt = many ? (i % 5 === 0 || i === days.length - 1 ? p.d : "") : (S.sType === "M" ? p.d : WD[p.wd]); return `<span style="${s === hlDay ? "color:var(--txt);font-weight:700" : ""}">${txt}</span>`; }).join("");
+  const sum = vals.reduce((a, b) => a + b, 0);
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Daily P/L</span>${badge(sum, money(sum))}</div>
+    <div class="bars">${bars}</div><div class="xl">${labels}</div></div>`;
+}
+function insightCard(tr, st) {
+  let t;
+  if (!tr.length) t = "No closed trades in this period yet.";
+  else {
+    const by = {}; tr.forEach(x => by[tKey(x)] = (by[tKey(x)] || 0) + x.profit);
+    const arr = Object.entries(by).sort((a, b) => b[1] - a[1]);
+    const [bk, bv] = arr[0], [wk, wv] = arr[arr.length - 1];
+    if (st.net > 0 && bv > 0) {
+      const share = Math.round(bv / st.net * 100);
+      t = `${esc(bk)} made <span class="pill">${share}%</span> of this period's profit` + (wv < 0 ? `, while ${esc(wk)} lost ${cash(-wv)}.` : ".");
+    } else if (wv < 0) t = `Biggest drag is ${esc(wk)} at <span class="pill">${money(wv)}</span>` + (bv > 0 ? `, while ${esc(bk)} made ${money(bv)}.` : ".");
+    else t = `Flat period: ${st.n} trades closed for ${money(st.net)}.`;
+    const hrs = {}; tr.forEach(x => { const h = mytParts(x.o || x.t).h; hrs[h] = (hrs[h] || 0) + x.profit; });
+    const bh = Object.entries(hrs).sort((a, b) => b[1] - a[1])[0];
+    if (bh && bh[1] > 0) t += ` Best entry hour: ${String(bh[0]).padStart(2, "0")}:00.`;
+  }
+  return `<div class="insight"><span class="tag">✦ Insight</span><div class="t">${t}</div></div>`;
+}
+function byCurrency(tr) {
+  const keys = symKeys();
+  if (!keys.length) return "";
+  const cnt = keys.map(k => tr.filter(t => tKey(t) === k).length), tot = cnt.reduce((a, b) => a + b, 0);
+  let off = 25, arcs = "";
+  keys.forEach((k, i) => { const p = tot ? cnt[i] / tot * 100 : 0; if (p > 0) { arcs += `<circle cx="21" cy="21" r="15.9" fill="none" stroke="${SHADES[i % SHADES.length]}" stroke-width="6" stroke-dasharray="${p.toFixed(2)} ${(100 - p).toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"/>`; off -= p; } });
+  const legend = keys.map((k, i) => `<span style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:${SHADES[i % SHADES.length]}"></span>${esc(k)} · ${cnt[i]} trade${cnt[i] === 1 ? "" : "s"}</span>`).join("");
+  const rows = keys.map(k => {
+    const l = tr.filter(t => tKey(t) === k), s = stats(l), o = S.open[k];
+    const buy = l.filter(t => t.dir === "BUY").reduce((a, t) => a + t.profit, 0), sell = l.filter(t => t.dir === "SELL").reduce((a, t) => a + t.profit, 0);
+    return `<div class="row"><button class="rowh" data-x="${esc(k)}"><span>${esc(k)} ${o ? "▾" : "▸"}</span>${badge(s.net, money(s.net))}</button>
+      ${o ? `<div class="g3" style="margin-top:10px;font-size:12px">
+        <div><div class="sub">Trades</div><b class="n">${s.n}</b></div><div><div class="sub">Win rate</div><b class="n">${s.n ? Math.round(s.wr) + "%" : "-"}</b></div><div><div class="sub">PF</div><b class="n">${s.n ? pfTxt(s.pf) : "-"}</b></div>
+        <div><div class="sub">Buy / Sell</div><b class="n">${buy.toFixed(1)} / ${sell.toFixed(1)}</b></div><div><div class="sub">Avg win</div><b class="n">${s.w ? money(s.aw) : "-"}</b></div><div><div class="sub">Open now</div><b class="n">${openCount(k)}</b></div>
+      </div><button class="lnk" data-goto="${esc(k)}">Open ${esc(k)} details →</button>` : ""}</div>`;
   }).join("");
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">By currency</span><span class="lbl">Tap to expand</span></div>
+    <div style="display:flex;gap:14px;align-items:center;margin-top:12px"><svg width="104" height="104" viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#1e211d" stroke-width="6"/>${arcs}<text x="21" y="23" text-anchor="middle" font-size="6" font-weight="700" fill="#f2f4ef">${tot}</text></svg>
+    <div style="display:flex;flex-direction:column;gap:7px;font-size:12px">${legend}</div></div>
+    <div class="stack" style="margin-top:12px;gap:8px">${rows}</div></div>`;
 }
 
-function renderTrades(v) {
-  const list = Object.values(v || {}).sort((a, b) => b.t - a.t).slice(0, 30);
-  if (!list.length) return;
-  $("trBody").innerHTML = list.slice(0, 30).map(t => `<tr><td>${myt(t.t)}</td><td>${esc(t.sym)}</td>
-      <td class="${t.dir === "BUY" ? "up" : "dn"}">${esc(t.dir)}</td>
-      <td class="${t.profit >= 0 ? "up" : "dn"}"><b>${money(t.profit)}</b></td><td class="s">${esc(t.reason)}</td></tr>`).join("");
-  const w = list.filter(t => t.profit > 0).length, net = list.reduce((s, t) => s + (t.profit || 0), 0);
-  $("trSum").textContent = `Last ${list.length}: win ${Math.round(100 * w / list.length)}% · net ${money(net)}`;
+/* ---------- CURRENCIES ---------- */
+function renderCur() {
+  const keys = symKeys();
+  $("cSym").innerHTML = `<option value="ALL">All</option>` + keys.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join("");
+  if (S.cSym !== "ALL" && !keys.includes(S.cSym)) S.cSym = "ALL";
+  $("cSym").value = S.cSym; $("cType").value = S.cType;
+  const list = fillPeriods("cPer", S.cType, S.trades, S.cPer); S.cPer = $("cPer").value;
+  const P = list.find(p => p.v === S.cPer);
+  const mine = S.trades.filter(t => S.cSym === "ALL" || tKey(t) === S.cSym);
+  const tr = mine.filter(t => t.t >= P.s && t.t < P.e), st = stats(tr);
+  const b0 = startBalance(P.s), g = b0 ? st.net / b0 * 100 : 0;
+  const sy = S.symbols[S.cSym], cfg = sy && sy.cfg;
+  const status = S.cSym === "ALL" ? "" : statusBadge(sy);
+  const cfgTxt = cfg ? `Lot ${cfg.lotMode === "manual" ? "manual " + cfg.lot : "auto " + cfg.risk + "%"}${cfg.cap > 0 ? " (max " + cfg.cap + ")" : ""} · SL/TP ${cfg.sltpMode === "manual" ? `manual ${cfg.sl}/${cfg.tp} ${cfg.unit}` : "auto (ATR)"} · max ${cfg.maxOpen} open` : (S.cSym === "ALL" ? "All S4 currencies" : "");
+  let h = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="lbl">${esc(S.cSym === "ALL" ? "All currencies" : S.cSym + (sy ? " · " + sy.strategy : ""))}</span>${status}</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px"><span class="n" style="font-size:30px;font-weight:700">${money(st.net)}</span>${badge(g, pct(Math.abs(g)))}</div>
+    <div class="sub" style="margin-top:2px">${esc(cfgTxt)}</div>
+    <div class="g3" style="margin-top:12px">
+      <div class="tile"><div class="k">Trades</div><div class="v n">${st.n}</div></div>
+      <div class="tile"><div class="k">Win rate</div><div class="v n">${st.n ? Math.round(st.wr) + "%" : "-"}</div></div>
+      <div class="tile"><div class="k">PF</div><div class="v n" style="color:${st.pf >= 1 ? "var(--lime)" : "var(--txt)"}">${st.n ? pfTxt(st.pf) : "-"}</div></div>
+      <div class="tile"><div class="k">Avg win</div><div class="v n">${st.w ? money(st.aw) : "-"}</div></div>
+      <div class="tile"><div class="k">Avg loss</div><div class="v n">${st.n - st.w ? money(st.al) : "-"}</div></div>
+      <div class="tile"><div class="k">Avg hold</div><div class="v n">${st.n ? holdTxt(st.hold) : "-"}</div></div>
+    </div></div>`;
+  // open positions
+  const pos = (S.cSym === "ALL" ? keys : [S.cSym]).flatMap(k => ((S.symbols[k] && S.symbols[k].positions) || []).map(p => ({ ...p, k })));
+  if (pos.length) h += `<div class="card"><div style="font-weight:600;margin-bottom:4px">Open trades</div>${pos.map(p => `<div class="tr"><div><div class="a">${esc(p.k)} ${esc(p.dir)} ${p.lots} @ ${p.entry}</div><div class="b">SL ${p.sl} · TP ${p.tp}${p.o ? " · since " + fmtT(p.o) : ""}</div></div>${badge(p.pl, money(p.pl))}</div>`).join("")}</div>`;
+  // buy vs sell
+  const side = d => { const l = tr.filter(t => t.dir === d), s = stats(l); return { l, s }; };
+  const B = side("BUY"), Sx = side("SELL"), tot = Math.max(1e-9, Math.abs(B.s.net) + Math.abs(Sx.s.net));
+  const sideRow = (name, o, col) => `<div><div style="display:flex;justify-content:space-between;font-size:13px"><span>${name} · ${o.s.n} trade${o.s.n === 1 ? "" : "s"} · ${o.s.n ? Math.round(o.s.wr) + "%" : "-"}</span>${badge(o.s.net, money(o.s.net))}</div><div style="height:10px;border-radius:5px;background:var(--raise);margin-top:7px"><div style="width:${Math.abs(o.s.net) / tot * 100}%;height:10px;border-radius:5px;background:${o.s.net < 0 ? "var(--red)" : col}"></div></div></div>`;
+  h += `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Buy vs Sell</span><span class="lbl">${esc(P.label)}</span></div><div class="stack" style="margin-top:12px;gap:12px">${sideRow("BUY", B, "var(--lime)")}${sideRow("SELL", Sx, "var(--lime2)")}</div></div>`;
+  h += heatmap(tr);
+  h += calendar(mine, P);
+  h += skipsCard(P);
+  const recent = tr.slice().reverse();
+  h += `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-weight:600">Trades</span><span class="lbl">${tr.length} in period</span></div>
+    ${recent.length ? recent.slice(0, 150).map(t => `<div class="tr"><div><div class="a">${S.cSym === "ALL" ? esc(tKey(t)) + " " : ""}${esc(t.dir)} ${t.lots ?? ""} @ ${t.entry ?? "-"}</div><div class="b">${t.o ? fmtT(t.o) + " → " + fmtHM(t.t) : fmtT(t.t)} · ${esc(t.reason)}</div></div>${badge(t.profit, money(t.profit))}</div>`).join("") : `<div class="empty">No closed trades in this period.</div>`}</div>
+    <button class="pri" id="cExport">⤓ Export ${esc(S.cSym === "ALL" ? "all" : S.cSym)} trades (CSV)</button>`;
+  $("cBody").innerHTML = h;
+  $("cExport").onclick = () => exportCsv(tr, `S4_${S.acc}_${S.cSym}_${P.label.replace(/[^\w]+/g, "_")}.csv`);
+  document.querySelectorAll("[data-day]").forEach(b => b.onclick = () => { S.cType = "D"; S.cPer = b.dataset.day; renderCur(); });
 }
-
-function renderProgress(st) {
-  const t = st.trades || [];
-  if (t.length) {
-    const w = t.filter(x => x.profit > 0), l = t.filter(x => x.profit <= 0);
-    const gp = w.reduce((s, x) => s + x.profit, 0), gl = -l.reduce((s, x) => s + x.profit, 0);
-    $("pgN").textContent = t.length; $("pgWin").textContent = "Win rate " + Math.round(100 * w.length / t.length) + "%";
-    $("pgNet").textContent = money(gp - gl); sign($("pgNet"), gp - gl);
-    $("pgPF").textContent = "Profit factor " + (gl > 0 ? (gp / gl).toFixed(2) : "∞") + " (above 1.00 = profitable)";
-    $("pgBest").textContent = money(Math.max(...t.map(x => x.profit))); $("pgWorst").textContent = "Worst " + money(Math.min(...t.map(x => x.profit)));
+function statusBadge(sy) {
+  if (!sy) return `<span class="nt">NO DATA</span>`;
+  if (nowS() - (sy.ts || 0) > 90) return `<span class="nt">OFFLINE</span>`;
+  const st = sy.status || "-";
+  return st === "AUTO" ? `<span class="up">● RUNNING</span>` : `<span class="wn">■ ${esc(st)}</span>`;
+}
+function heatmap(tr) {
+  const grid = Array.from({ length: 7 }, () => Array(12).fill(0)), pnl = {};
+  tr.forEach(t => { const p = mytParts(t.o || t.t); grid[p.wd][Math.floor(p.h / 2)]++; const k = p.wd + "|" + p.h; pnl[k] = (pnl[k] || 0) + t.profit; });
+  const mx = Math.max(1, ...grid.flat());
+  const col = v => v === 0 ? "#181b17" : ["#2c3a17", "#4f6a22", "#8fb84a", "#c5f36b"][Math.min(3, Math.floor((v / mx) * 3.999))];
+  let rows = `<span></span>` + Array.from({ length: 12 }, (_, i) => `<span>${i % 3 === 0 ? String(i * 2).padStart(2, "0") : ""}</span>`).join("");
+  grid.forEach((r, d) => { rows += `<span>${WD[d]}</span>` + r.map(v => `<i style="background:${col(v)}" title="${v}"></i>`).join(""); });
+  const ent = Object.entries(pnl).sort((a, b) => b[1] - a[1]);
+  const lab = k => { const [d, h] = k.split("|"); return `${WD[d]} ${String(h).padStart(2, "0")}:00`; };
+  const late = tr.length ? Math.round(100 * tr.filter(t => mytParts(t.o || t.t).h >= 20).length / tr.length) : 0;
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Trades by weekday &amp; hour</span><span style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--mut)">Low <i style="width:9px;height:9px;border-radius:2px;background:#2c3a17;display:inline-block"></i><i style="width:9px;height:9px;border-radius:2px;background:#4f6a22;display:inline-block"></i><i style="width:9px;height:9px;border-radius:2px;background:#8fb84a;display:inline-block"></i><i style="width:9px;height:9px;border-radius:2px;background:#c5f36b;display:inline-block"></i> High</span></div>
+    <div class="hm">${rows}</div>
+    <div class="g3 tile" style="margin-top:12px;font-size:11px;color:var(--mut)">
+      <div>Best hour<div style="color:var(--txt);font-weight:700;font-size:13px">${ent.length && ent[0][1] > 0 ? lab(ent[0][0]) : "-"}</div></div>
+      <div>Worst hour<div style="color:var(--txt);font-weight:700;font-size:13px">${ent.length && ent[ent.length - 1][1] < 0 ? lab(ent[ent.length - 1][0]) : "-"}</div></div>
+      <div>After 20:00<div style="color:var(--txt);font-weight:700;font-size:13px">${tr.length ? late + "%" : "-"}</div></div>
+    </div></div>`;
+}
+function calendar(mine, P) {
+  const p = mytParts(P.s + 1), ms = monthStart(p.y, p.m), me = monthStart(p.m === 11 ? p.y + 1 : p.y, (p.m + 1) % 12);
+  const lead = mytParts(ms + 1).wd, today = dayStart(nowS());
+  let cells = "";
+  for (let i = 0; i < lead; i++) cells += `<span></span>`;
+  for (let s = ms; s < me; s += DAY) {
+    const v = mine.filter(t => t.t >= s && t.t < s + DAY), sum = v.reduce((a, t) => a + t.profit, 0), d = mytParts(s + 1).d;
+    const sel = S.cType === "D" && String(s) === S.cPer;
+    const style = !v.length ? "" : sum > 0 ? (sel ? "background:#c5f36b;color:#0a0b0a;font-weight:700" : "background:#2c3a17;color:#c5f36b") : (sel ? "background:#ff7a6b;color:#0a0b0a;font-weight:700" : "background:#2e1513;color:#ff7a6b");
+    cells += `<button data-day="${s}" style="${style}${s === today && !sel ? ";outline:1px solid #5f655c" : ""}${sel && !v.length ? ";outline:1.5px solid #c5f36b" : ""}">${d}${v.length ? `<div class="n" style="font-weight:700">${sum > 0 ? "+" : ""}${sum.toFixed(1)}</div>` : ""}</button>`;
   }
-  const f = st.first, a = st.account;
-  if (f && a && f.bal > 0) {
-    const g = (a.balance - f.bal) / f.bal * 100;
-    $("pgGrow").textContent = (g >= 0 ? "+" : "") + g.toFixed(1) + "%"; sign($("pgGrow"), g);
-    $("pgFrom").textContent = "Balance " + money(f.bal) + " on " + myt(f.t) + " → " + money(a.balance);
-  }
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Daily P/L · ${MON[p.m]} ${p.y}</span><span class="lbl">Tap a day</span></div>
+    <div class="cal" style="color:var(--mut);margin:12px 0 4px">${WD.map(w => `<span>${w[0]}</span>`).join("")}</div><div class="cal">${cells}</div></div>`;
+}
+function skipsCard(P) {
+  const tot = {};
+  const keys = S.cSym === "ALL" ? Object.keys(S.skips) : [S.cSym];
+  keys.forEach(k => { const byDay = S.skips[k] || {}; Object.entries(byDay).forEach(([day, obj]) => {
+    const s = Date.UTC(+day.slice(0, 4), +day.slice(4, 6) - 1, +day.slice(6, 8)) / 1000 - H8;
+    if (s >= P.s && s < P.e) Object.entries(obj || {}).forEach(([r, n]) => tot[r] = (tot[r] || 0) + (n || 0)); }); });
+  const arr = Object.entries(tot).filter(e => e[1] > 0).sort((a, b) => b[1] - a[1]);
+  const cols = ["#c5f36b", "#8fb84a", "#4f6a22", "#3e5320", "#2a2e28", "#2a2e28", "#2a2e28"];
+  return `<div class="card"><div style="font-weight:600;margin-bottom:10px">Why it didn't trade <span class="sub" style="font-weight:400">· signals skipped</span></div>
+    ${arr.length ? `<div class="stack" style="gap:8px">${arr.map(([r, n], i) => `<div class="tile" style="display:flex;justify-content:space-between;font-size:13px"><span style="display:flex;align-items:center;gap:7px"><span class="sq" style="background:${cols[i]}"></span>${esc(SKIP_TXT[r] || r)}</span><b class="n">${n}</b></div>`).join("")}</div>` : `<div class="empty">No skipped signals recorded in this period.</div>`}</div>`;
 }
 
-function renderChart(v) {
-  const pts = Object.values(v || {}).filter(p => p && p.t && p.eq != null).sort((a, b) => a.t - b.t);
-  const svg = $("chart");
-  if (pts.length < 2) { svg.innerHTML = ""; $("chartNote").textContent = "The chart fills in as the EA reports (one point every 5 minutes)."; return; }
-  const W = 600, H = 180, pad = 8;
-  const vals = pts.flatMap(p => [p.eq, p.bal ?? p.eq]);
-  let lo = Math.min(...vals), hi = Math.max(...vals); if (hi - lo < 1) { hi += 0.5; lo -= 0.5; }
-  const x = i => pad + i * (W - 2 * pad) / (pts.length - 1);
-  const y = val => H - pad - (val - lo) * (H - 2 * pad) / (hi - lo);
-  const line = key => pts.map((p, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(p[key] ?? p.eq).toFixed(1)).join(" ");
-  const up = pts[pts.length - 1].eq >= pts[0].eq;
-  const col = up ? "#26a269" : "#e5534b";
-  svg.innerHTML = `<path d="${line("eq")} L${x(pts.length-1)} ${H} L${x(0)} ${H} Z" fill="${col}" opacity="0.12"/>
-    <path d="${line("bal")}" fill="none" stroke="#8b949e" stroke-width="1.2" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>
-    <path d="${line("eq")}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
-  $("chartNote").textContent = `${myt(pts[0].t)} → ${myt(pts[pts.length-1].t)} · low ${money(lo)} · high ${money(hi)} · solid = equity, dashed = balance`;
+/* ---------- CONTROL ---------- */
+function renderCtl() {
+  if (!S.ctlDirty) { updCtlBadges(); return; }
+  S.ctlDirty = false;
+  const c = S.control || {}, a = S.account || {}, keys = Object.keys(S.symbols).sort();
+  if (S.ctlOpen == null && keys.length) S.ctlOpen = keys[0];
+  const paused = !!(a.paused ?? c.pause);
+  let h = `<div class="card stack" style="gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">All currencies</span><span id="allBadge">${paused ? '<span class="wn">■ STOPPED</span>' : '<span class="up">● RUNNING</span>'}</span></div>
+      <div class="g2"><button class="btn red" id="stopAll" style="height:50px;background:#1a0f0e;border-color:#3a1c19">■ Stop all</button><button class="pri" id="startAll" style="height:50px">▶ Start all</button></div>
+      <button class="btn" id="resetAll">↺ Reset daily/weekly stop · all</button>
+      <button class="btn red" id="closeAll">✕ Close all open trades</button>
+    </div>
+    <div class="card stack" style="gap:12px">
+      <span class="lbl">Account limits</span>
+      <div class="g3">
+        <label class="fl">Daily stop %<input id="aDaily" type="number" inputmode="decimal" step="0.5" value="${c.dailyPct ?? a.dailyPct ?? ""}"></label>
+        <label class="fl">Weekly stop %<input id="aWeekly" type="number" inputmode="decimal" step="0.5" value="${c.weeklyPct ?? a.weeklyPct ?? ""}"></label>
+        <label class="fl">Max open (all)<input id="aMax" type="number" inputmode="numeric" step="1" value="${c.maxOpenAll ?? 6}"></label>
+      </div>
+      <span class="lbl" style="margin-top:4px">Set every currency at once</span>
+      <div class="g2">
+        <label class="fl">Risk per trade %<input id="aRisk" type="number" inputmode="decimal" step="0.1" value="${c.riskPct ?? a.riskPct ?? ""}"></label>
+        <div class="fl">Max open per currency<div class="seg" id="aMO">${[1,2,3].map(n => `<button data-v="${n}">${n}</button>`).join("")}</div></div>
+      </div>
+      <button class="pri" id="applyAll">Apply to all</button>
+      <div class="ack" id="ackLine">${S.ack ? "✓ EA applied: " + esc(S.ack.applied) + " · " + ago(S.ack.ts) : ""}</div>
+    </div>
+    <div class="lbl" style="margin:8px 0 0">By currency</div>`;
+  if (!keys.length) h += `<div class="card empty">Waiting for the bots to report their currencies…</div>`;
+  keys.forEach(k => h += symCard(k));
+  h += `<div class="foot">Stop = no new trades; open trades keep their SL/TP.<br>Gold manual SL/TP is in USD price distance (e.g. SL 5 = $5).<br>Weekly stop follows the account limits above.</div>`;
+  $("pCtl").innerHTML = h;
+  // all-currency actions
+  const mo0 = (() => { const v = keys.map(k => (S.control.sym && S.control.sym[k] && S.control.sym[k].maxOpen) || (S.symbols[k].cfg && S.symbols[k].cfg.maxOpen) || 1); return v.length && v.every(x => x === v[0]) ? v[0] : 1; })();
+  segInit("aMO", mo0);
+  $("stopAll").onclick = () => confirm("Stop ALL currencies? No new trades; open trades keep their SL/TP.") && send({ pause: true }, "Stop all");
+  $("startAll").onclick = () => send({ pause: false }, "Start all");
+  $("resetAll").onclick = () => confirm("Reset the daily/weekly loss stop on ALL currencies? Trading can resume today.") && send({ resetAll: nowS() }, "Reset all");
+  $("closeAll").onclick = () => confirm("Close ALL open S4 trades now? This cannot be undone.") && send({ closeAll: nowS() }, "Close all");
+  $("applyAll").onclick = () => {
+    const d = +$("aDaily").value, w = +$("aWeekly").value, m = Math.round(+$("aMax").value), r = +$("aRisk").value, mo = +segVal("aMO");
+    if (!(d >= 1 && d <= 50) || !(w >= 1 && w <= 50)) return alert("Daily and weekly stop must be 1–50%.");
+    if (!(m >= 1 && m <= 20)) return alert("Max open (all) must be 1–20.");
+    if (!(r >= 0.1 && r <= 10)) return alert("Risk per trade must be 0.1–10%.");
+    if (!confirm(`Apply to the whole account?\nDaily stop ${d}% · Weekly stop ${w}% · Max open ${m}\nEvery currency: risk ${r}% per trade, max ${mo} open`)) return;
+    const u = { dailyPct: d, weeklyPct: w, maxOpenAll: m, riskPct: r };
+    keys.forEach(k => { u[`sym/${k}/risk`] = r; u[`sym/${k}/maxOpen`] = mo; });
+    send(u, "Apply to all", true);
+  };
+  keys.forEach(k => wireSym(k));
 }
+function symCfg(k) { const c = (S.control.sym && S.control.sym[k]) || {}, e = (S.symbols[k] && S.symbols[k].cfg) || {}; return { ...e, ...c }; }
+function symCard(k) {
+  const sy = S.symbols[k] || {}, c = symCfg(k), open = S.ctlOpen === k, unit = (sy.cfg && sy.cfg.unit) || (k.includes("XAU") ? "USD" : "pips");
+  const sub = `${esc(sy.strategy || "")} · ${openCount(k)} open`;
+  const sum = `${c.lotMode === "manual" ? "Manual " + (c.lot ?? "") + " lot" : "Auto " + (c.risk ?? "-") + "%"} · max ${c.maxOpen || 1} · SL/TP ${c.sltpMode === "manual" ? "manual" : "auto"}`;
+  if (!open) return `<div class="card"><button class="rowh" data-open="${esc(k)}"><span><b>${esc(k)}</b><div class="sub" style="font-weight:400">${sum}</div></span><span style="display:flex;align-items:center;gap:8px"><span data-badge="${esc(k)}">${statusBadge(sy)}</span><span class="sub">›</span></span></button></div>`;
+  return `<div class="card stack" style="gap:12px" id="sc_${esc(k)}">
+    <button class="rowh" data-open=""><span><span style="font-size:17px;font-weight:700">${esc(k)}</span><div class="sub" style="font-weight:400">${sub}</div></span><span data-badge="${esc(k)}">${statusBadge(sy)}</span></button>
+    <div class="g2"><button class="btn red" data-stop="${esc(k)}">${c.stop ? "▶ Start " : "■ Stop "}${esc(k)}</button><button class="btn" data-reset="${esc(k)}">↺ Reset stop</button></div>
+    <div class="fl">Lot size<div class="seg" id="lm_${esc(k)}"><button data-v="auto">Auto (risk %)</button><button data-v="manual">Manual lot</button></div></div>
+    <div class="g2" id="lotAuto_${esc(k)}"><label class="fl">Risk per trade %<input id="rk_${esc(k)}" type="number" inputmode="decimal" step="0.1" value="${c.risk ?? ""}"></label><label class="fl">Max lot (cap, 0 = none)<input id="cp_${esc(k)}" type="number" inputmode="decimal" step="0.01" value="${c.cap ?? 0}"></label></div>
+    <div class="g2" id="lotMan_${esc(k)}"><label class="fl">Fixed lot per trade<input id="lt_${esc(k)}" type="number" inputmode="decimal" step="0.01" value="${c.lot ?? 0.01}"></label><label class="fl">Max lot (cap, 0 = none)<input id="cp2_${esc(k)}" type="number" inputmode="decimal" step="0.01" value="${c.cap ?? 0}"></label></div>
+    <div class="fl">Max open trades<div class="seg" id="mo_${esc(k)}">${[1,2,3].map(n => `<button data-v="${n}">${n}</button>`).join("")}</div></div>
+    <div class="fl">Stop loss / take profit<div class="seg" id="sm_${esc(k)}"><button data-v="auto">Auto (ATR)</button><button data-v="manual">Manual size</button></div></div>
+    <div class="tile sub" id="slAuto_${esc(k)}">Auto: SL ${(sy.cfg && sy.cfg.slAuto) || 1.5} × ATR(M5) · TP ${(sy.cfg && sy.cfg.rrAuto) || 1.5} × SL</div>
+    <div class="g2" id="slMan_${esc(k)}"><label class="fl">SL (${unit})<input id="sl_${esc(k)}" type="number" inputmode="decimal" step="0.1" value="${c.sl || ""}"></label><label class="fl">TP (${unit})<input id="tp_${esc(k)}" type="number" inputmode="decimal" step="0.1" value="${c.tp || ""}"></label></div>
+    <button class="pri" data-save="${esc(k)}">Save ${esc(k)}</button>
+  </div>`;
+}
+function wireSym(k) {
+  document.querySelectorAll(`[data-open]`).forEach(b => b.onclick = () => { S.ctlOpen = b.dataset.open || "__none"; S.ctlDirty = true; renderCtl(); });
+  if (S.ctlOpen !== k) return;
+  const c = symCfg(k), sy = S.symbols[k] || {};
+  segInit("lm_" + k, c.lotMode === "manual" ? "manual" : "auto", v => { show("lotAuto_" + k, v === "auto"); show("lotMan_" + k, v === "manual"); });
+  segInit("mo_" + k, c.maxOpen || 1);
+  segInit("sm_" + k, c.sltpMode === "manual" ? "manual" : "auto", v => { show("slAuto_" + k, v === "auto"); show("slMan_" + k, v === "manual"); });
+  document.querySelector(`[data-stop="${CSS.escape(k)}"]`).onclick = () => {
+    const stop = !symCfg(k).stop;
+    if (stop && !confirm(`Stop ${k}? No new ${k} trades; open trades keep their SL/TP.`)) return;
+    send({ [`sym/${k}/stop`]: stop }, (stop ? "Stop " : "Start ") + k, true);
+  };
+  document.querySelector(`[data-reset="${CSS.escape(k)}"]`).onclick = () => confirm(`Reset the daily/weekly loss stop for ${k}?`) && send({ [`sym/${k}/reset`]: nowS() }, "Reset " + k);
+  document.querySelector(`[data-save="${CSS.escape(k)}"]`).onclick = () => {
+    const lm = segVal("lm_" + k), sm = segVal("sm_" + k), mo = +segVal("mo_" + k);
+    const risk = +$("rk_" + k).value, lot = +$("lt_" + k).value, cap = +(lm === "manual" ? $("cp2_" + k).value : $("cp_" + k).value) || 0;
+    const sl = +$("sl_" + k).value, tp = +$("tp_" + k).value;
+    if (lm === "auto" && !(risk >= 0.1 && risk <= 10)) return alert("Risk per trade must be 0.1–10%.");
+    if (lm === "manual" && !(lot > 0 && lot <= 50)) return alert("Enter a fixed lot above 0.");
+    if (!(cap >= 0)) return alert("Max lot must be 0 or more.");
+    if (sm === "manual" && !(sl > 0 && tp > 0)) return alert("Enter both SL and TP sizes above 0.");
+    const unit = (sy.cfg && sy.cfg.unit) || "pips";
+    const msg = `Save ${k}?\nLot: ${lm === "manual" ? lot + " fixed" : risk + "% risk"}${cap > 0 ? " (max " + cap + ")" : ""}\nMax open: ${mo}\nSL/TP: ${sm === "manual" ? `SL ${sl} / TP ${tp} ${unit}` : "auto (ATR)"}`;
+    if (!confirm(msg)) return;
+    const u = {}; const p = `sym/${k}/`;
+    Object.assign(u, { [p + "lotMode"]: lm, [p + "maxOpen"]: mo, [p + "sltpMode"]: sm, [p + "cap"]: cap });
+    if (lm === "auto") u[p + "risk"] = risk; else u[p + "lot"] = lot;
+    if (sm === "manual") { u[p + "sl"] = sl; u[p + "tp"] = tp; }
+    send(u, "Save " + k, true);
+  };
+}
+function segInit(id, val, onChange) {
+  const el = $(id); if (!el) return;
+  const set = v => { el.querySelectorAll("button").forEach(b => b.classList.toggle("on", String(b.dataset.v) === String(v))); el.dataset.val = v; onChange && onChange(String(v)); };
+  el.querySelectorAll("button").forEach(b => b.onclick = () => set(b.dataset.v));
+  set(val);
+}
+const segVal = id => $(id).dataset.val;
+function send(obj, what, rerender) {
+  const line = $("ackLine");
+  if (line) line.textContent = what + ": sending…";
+  update(ref(db, S.base + "/control"), obj)
+    .then(() => { if ($("ackLine")) $("ackLine").textContent = what + ": sent. Waiting for the EA…"; if (rerender) { S.ctlDirty = true; setTimeout(renderCtl, 50); } })
+    .catch(e => { if ($("ackLine")) $("ackLine").textContent = "Not sent: " + e.message; alert("Not sent: " + e.message); });
+}
+function updCtlBadges() {
+  document.querySelectorAll("[data-badge]").forEach(el => el.innerHTML = statusBadge(S.symbols[el.dataset.badge]));
+  const a = S.account || {}, el = $("allBadge");
+  if (el) el.innerHTML = a.paused ? '<span class="wn">■ STOPPED</span>' : '<span class="up">● RUNNING</span>';
+}
+
+/* ---------- CSV ---------- */
+function exportCsv(list, name) {
+  const head = ["close_time_myt","open_time_myt","symbol","strategy","side","lots","entry","exit","profit_usd","result","close_reason","hold_minutes"];
+  const d = t => { const p = mytParts(t); return `${p.y}-${String(p.m + 1).padStart(2,"0")}-${String(p.d).padStart(2,"0")} ${String(p.h).padStart(2,"0")}:${String(p.mi).padStart(2,"0")}`; };
+  const q = v => { const s = String(v ?? ""); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const rows = list.map(t => [d(t.t), t.o ? d(t.o) : "", t.sym, t.strategy, t.dir, t.lots, t.entry, t.exit, Number(t.profit).toFixed(2), t.profit > 0 ? "win" : "loss", t.reason, t.o ? Math.round((t.t - t.o) / 60) : ""].map(q).join(","));
+  const csv = head.join(",") + "\n" + rows.join("\n");
+  if (!list.length) return alert("No trades in this period to export.");
+  const file = new File([csv], name, { type: "text/csv" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: name }).catch(() => {}); return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+boot();
 </script>
 </body>
 </html>
